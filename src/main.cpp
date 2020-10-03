@@ -1,9 +1,15 @@
 #include <Arduino.h>
+#include "PanelPlacer.h"
+
+PanelPlacer bot;
 
 void setup() {
-  // put your setup code here, to run once:
+  bot.init();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+
+  bot.run();
+
+  delay(100);
 }
