@@ -14,7 +14,7 @@ class PanelPlacer
     Romi32U4ButtonA buttonA;
 
     enum GoalStates {
-        REMOVE_AND_RETURN,
+        REMOVE,
         DEPOSIT,
         REPLACE,
         TO_ROOF,
@@ -32,7 +32,8 @@ class PanelPlacer
         CLOSE,
         IDLE,
         TURN,
-        OPEN
+        OPEN,
+        END
     } behaviorState;
 
     struct instruction
@@ -44,22 +45,26 @@ class PanelPlacer
     struct goal
     {
         instruction instructions[10];
-        int instructionCount;    
     };
 
     goal IDLE_INST = {
-        { {IDLE, 0} }, 1
+        { {IDLE, 0} }
     };
 
-    goal TESTGOAL1 = {
-        { {POSITION,90},
-          {POSITION,60},
-          {POSITION,30} }, 3 };
+    goal REPLACE = {
+        { { POSITION, 10 }, //collector position + 10 (location state)
+          { DRIVE, 5 }, //drive forward 5 inches
+          { POSITION }, //collector position (location state)
+          { OPEN_GRIP } //release collector
+          { END          } } 
+        };
 
     goal TESTGOAL2 = {
-        { {POSITION,-30},
-          {POSITION,-60},
-          {POSITION,-90} }, 3 };
+        { { POSITION,-30 },
+          { POSITION,-60 },
+          { POSITION,-90 },
+          { END          } } 
+        };
 
     goal goalList[3] = { IDLE_INST, TESTGOAL1, TESTGOAL2 };
 
@@ -69,9 +74,8 @@ class PanelPlacer
     unsigned long clock;
     GoalStates idleBuffer;
 
-    void next();
-    void changeBehavior(BehaviorStates new_behavior);
-    void changeGoal(GoalStates new_goal);
+    void nextBehavior();
+    void changeGoal();
 
 public:
     void init();

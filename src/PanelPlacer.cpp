@@ -2,7 +2,7 @@
 
 void PanelPlacer::init()
 {
-    changeGoal(TO_ROOF);
+    goalState = TO_ROOF;
     side = SIDE_45;
 
     fourbar.mount();
@@ -97,44 +97,40 @@ void PanelPlacer::run()
             //chassis.setTargetRotation(angle);
             //if (chassis.turn()) next();
 
+        case END:
+            changeGoal();
+            instNum = 0;
+            break;
+
+        case IDLE:
+            if (buttonA.isPressed()) { goalState = idleBuffer; }
+            break;
+
         default:
             status(); 
-            if (buttonA.isPressed()) { goalState = idleBuffer; }
             break;
     }
 
 }
 
-void PanelPlacer::changeGoal(GoalStates new_goal)
+void PanelPlacer::changeGoal()
 {
+    switch(goalState)
+    {
+        case TO_ROOF:
+            goalState = withCollector ? REPLACE : REMOVE;
+            break;
+    }
     Serial.print("CHANGED TO GOAL ");
-    Serial.print(new_goal);
-    Serial.print("  BECAUSE INST COUNT = ");
-    Serial.println(instNum);
-    goalState = new_goal;
-    instNum = 0;
+    Serial.println(goalState);
 }
 
-void PanelPlacer::next()
+void PanelPlacer::nextBehavior()
 {
     instNum++;
 
-    //if this was the last instruction, switch the goal state
-    if (instNum == goalList[goalState].instructionCount)
-    {
-        //chassis.resetEncoders
-        switch(goalState)
-        {
-            case TO_ROOF:
-                if (withCollector) changeGoal(REPLACE);
-                else changeGoal(REMOVE_AND_RETURN);
-        }
-    }
-    else 
-    {
-        Serial.print("CHANGED TO BEHAVIOR ");
-        Serial.println(instNum);
-    }
+    Serial.print("CHANGED TO BEHAVIOR ");
+    Serial.println(instNum);
 
     if (STEP_MODE) {
         idleBuffer = goalState;
