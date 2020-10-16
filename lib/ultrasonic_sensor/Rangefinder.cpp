@@ -12,6 +12,7 @@ void Rangefinder::wake()
     pinging = false;
     pingTime = 0;
     range = 432; //set the range so its defined lol
+    // range is the current distance to wall
 } 
 void Rangefinder::echoISR()
 {
@@ -45,4 +46,23 @@ void Rangefinder::ping()
 float Rangefinder::getDistanceCM()
 {
     return range;
+}
+
+
+int Rangefinder::seek(int setpoint)
+{
+    // setpoint is the desired distance from object/wall
+    if(pid.getSetpoint() != setpoint)
+    {
+        pid.setSetpoint(setpoint);
+    }
+
+    // returns ddesired motor efforts
+    return pid.calculate(getDistanceCM());
+}
+
+
+bool Rangefinder::arrived()
+{
+    return (abs(getDistanceCM() - pid.getSetpoint()) <= pid.getTolerance());
 }

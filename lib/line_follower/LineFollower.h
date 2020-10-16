@@ -9,7 +9,11 @@ class LineFollower
 {
 
     public:
+
+        LineFollower(float kp, float ki, float kd, int threshold);
+        void setSetPoints(int left, int right);
         void lineSetup();
+
         bool lineDetected();
         bool intersectionDetected();
         int getLeftEffort();
@@ -25,6 +29,7 @@ class LineFollower
         QTRSensors qtr;
         PIDController leftpid;
         PIDController rightpid;
+        int goal;
 
         
 

@@ -8,6 +8,9 @@ class PIDController
         void setSetpoint(float target);
         void setTolerance(float tolerance);
         bool onTarget(float currentValue);
+        float getSetpoint();
+        float getTolerance();
+        
 
     private:
         float Kp, Ki, Kd;

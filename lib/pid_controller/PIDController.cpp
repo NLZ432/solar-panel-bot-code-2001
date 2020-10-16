@@ -49,6 +49,16 @@ bool PIDController::onTarget(float currentValue)
   return abs(currentValue - setpoint) <= tolerance;
 }
 
+float PIDController::getSetpoint()
+{
+  return setpoint;
+}
+
+float PIDController::getTolerance()
+{
+  return tolerance;
+}
+
 
 
 void setEffortwithoutDB(int effort)
