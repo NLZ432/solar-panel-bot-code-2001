@@ -85,6 +85,35 @@ void BlueMotor::setEffort(int effort)
     int val = abs(effort) * 4;
     OCR1C = val;
 }
+int BlueMotor::setEffortWithoutDB(int effort)
+{
+  int direction = 0;
+  if(effort >= 0)
+  {
+    digitalWrite(AIN1, HIGH);
+    digitalWrite(AIN2, LOW);
+    direction = 1;
+  }
+  else if(effort < 0)
+  {
+    digitalWrite(AIN1, LOW);
+    digitalWrite(AIN2, HIGH);
+    direction = -1;
+  }
+  else {
+  digitalWrite(AIN1, LOW);
+  digitalWrite(AIN2, LOW);
+  // digitalWrite(PWMOutPin, HIGH);
+  }
+  
+  uint16_t newEffort = uint16_t(((400.0 - DB) * abs(effort))/400.0 + DB*(effort != 0));
+  newEffort = min(newEffort, 400);
+  
+  //DB*(effort != 0) ensures that if effort is zero, the register is set to zero
+  OCR1C = newEffort;
+  return int(newEffort)*direction; //multiplied by the direction for sign consistency in graph
+
+}
 void BlueMotor::moveTo(long target_position)
 {
 
