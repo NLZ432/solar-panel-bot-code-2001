@@ -134,14 +134,19 @@ void PanelPlacer::run()
             break;
             }
 
-        case END:
+        case NEXT:
             changeGoal();
             instNum = 0;
             break;
 
-        default:
-            status(); 
+        case FIN:
+            if (millis() - clock > 2000)
+            {
+                clock = millis();
+                status();
+            }
             break;
+
     }
 
 }
@@ -169,13 +174,9 @@ void PanelPlacer::changeGoal()
         case TEST1:
             goalState = TEST2;
             break;
-
-        default:
-            if (millis() - clock > 2000)
-            {
-                clock = millis();
-                status();
-            }
+        case TEST2:
+            goalState = DONE;
+            break;
     }
     Serial.print("CHANGED TO GOAL ");
     Serial.println(goalState);

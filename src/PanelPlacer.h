@@ -6,7 +6,7 @@
 class PanelPlacer 
 {
 
-    bool STEP_MODE = true; //will wait for button after each behavior change
+    bool STEP_MODE = false; //will wait for button after each behavior change
 
     Chassis chassis;
     BlueMotor fourbar;
@@ -21,6 +21,7 @@ class PanelPlacer
         CROSS,
         TEST1,
         TEST2,
+        DONE
     } goalState;
 
     enum BehaviorStates { 
@@ -33,7 +34,8 @@ class PanelPlacer
         POSITION,
         TO_PANEL,
         TURN,
-        END
+        NEXT,
+        FIN
     } behaviorState;
 
     struct instruction
@@ -51,17 +53,17 @@ class PanelPlacer
         { {TO_INTERSECTION},
           {TURN, -90},
           {DRIVE_DISTANCE, 10},
-          {END     } } 
+          {NEXT     } } 
     };
 
     goal REMOVE_INST = {
         { {POSITION},
-          {END     } } 
+          {NEXT     } } 
     };
 
     goal DEPOSIT_INST = {
         { {POSITION},
-          {END     } } 
+          {NEXT     } } 
     };
 
     goal REPLACE_INST = {
@@ -69,26 +71,30 @@ class PanelPlacer
           { DRIVE_DISTANCE, 5 }, //drive forward 5 inches
           { POSITION }, //collector position (location state)
           { OPEN_GRIP }, //release collector
-          { END       } } 
+          { NEXT       } } 
         };
 
     goal CROSS_INST = {
         { {POSITION},
-          {END     } } 
+          {NEXT     } } 
     };
 
     goal TEST1_INST = {
         { { POSITION,90 },
           { POSITION,60 },
           { POSITION,30 },
-          { END          } } 
+          { NEXT        } } 
         };
 
     goal TEST2_INST = {
         { { POSITION,-30 },
           { POSITION,-60 },
           { POSITION,-90 },
-          { END          } } 
+          { NEXT         } } 
+        };
+    
+    goal DONE_INST = {
+        { {FIN} } 
         };
 
     goal goalList[8] = { 
@@ -99,6 +105,7 @@ class PanelPlacer
         CROSS_INST,
         TEST1_INST,
         TEST2_INST,
+        DONE_INST
         };
 
     int instNum; //index of current instruction
