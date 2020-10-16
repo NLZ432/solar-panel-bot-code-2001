@@ -40,8 +40,13 @@ class BlueMotor
     long target_count = 0;
     float target_speed = 0;
 
+    float DB = 33.0f; //motor deadband
+    
+
 public: 
     void setEffort(int effort);
+    int setEffortWithoutDB(int effort);
+
     void setTargetPosition(float position);
     void setTargetSpeed(float speed);
 

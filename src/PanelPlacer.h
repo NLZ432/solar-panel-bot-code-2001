@@ -6,7 +6,7 @@
 class PanelPlacer 
 {
 
-    bool STEP_MODE = true; //will wait for button after each behavior change
+    bool STEP_MODE = false; //will wait for button after each behavior change
 
     Chassis chassis;
     BlueMotor fourbar;
@@ -14,22 +14,28 @@ class PanelPlacer
     Romi32U4ButtonA buttonA;
 
     enum GoalStates {
-         IDLING,
-         TG1,
-         TG2 
+        TO_ROOF,
+        REMOVE,
+        DEPOSIT,
+        REPLACE,
+        CROSS,
+        TEST1,
+        TEST2,
+        DONE
     } goalState;
 
     enum BehaviorStates { 
-        IDLE,
-        POSITION,
-        OPEN,
-        CLOSE,
-        TURN,
-        PLACE,
-        DRIVE_DISTANCE,
-        TO_PANEL,
         TO_INTERSECTION,
-        TO_STATION
+        DRIVE_DISTANCE,
+        TO_STATION,
+        CLOSE_GRIP,
+        SEEK_LINE,
+        OPEN_GRIP,
+        POSITION,
+        TO_PANEL,
+        TURN,
+        NEXT,
+        FIN
     } behaviorState;
 
     struct instruction
@@ -41,38 +47,75 @@ class PanelPlacer
     struct goal
     {
         instruction instructions[10];
-        int instructionCount;    
-        GoalStates state;
     };
 
-    goal IDLE_INST = {
-        { {IDLE, 0} }, 1, IDLING
+    goal TO_ROOF_INST = {
+        { {TO_INTERSECTION},
+          {TURN, -90},
+          {DRIVE_DISTANCE, 10},
+          {NEXT     } } 
     };
 
-    goal TESTGOAL1 = {
-        { {POSITION,90},
-          {POSITION,60},
-          {POSITION,30} }, 3, TG1 };
+    goal REMOVE_INST = {
+        { {POSITION},
+          {NEXT     } } 
+    };
 
-    goal TESTGOAL2 = {
-        { {POSITION,-30},
-          {POSITION,-60},
-          {POSITION,-90} }, 3, TG2 };
+    goal DEPOSIT_INST = {
+        { {POSITION},
+          {NEXT     } } 
+    };
+
+    goal REPLACE_INST = {
+        { { POSITION, 10 }, //collector position + 10 (location state)
+          { DRIVE_DISTANCE, 5 }, //drive forward 5 inches
+          { POSITION }, //collector position (location state)
+          { OPEN_GRIP }, //release collector
+          { NEXT       } } 
+        };
+
+    goal CROSS_INST = {
+        { {POSITION},
+          {NEXT     } } 
+    };
+
+    goal TEST1_INST = {
+        { { POSITION,90 },
+          { POSITION,60 },
+          { POSITION,30 },
+          { NEXT        } } 
+        };
+
+    goal TEST2_INST = {
+        { { POSITION,-30 },
+          { POSITION,-60 },
+          { POSITION,-90 },
+          { NEXT         } } 
+        };
+    
+    goal DONE_INST = {
+        { {FIN} } 
+        };
+
+    goal goalList[8] = { 
+        TO_ROOF_INST,
+        REMOVE_INST,
+        DEPOSIT_INST,
+        REPLACE_INST,
+        CROSS_INST,
+        TEST1_INST,
+        TEST2_INST,
+        DONE_INST
+        };
 
     int instNum; //index of current instruction
-    goal goalList[3] = { IDLE_INST, TESTGOAL1, TESTGOAL2 };
-
+    enum sides { SIDE_45, SIDE_25 }side;
+    bool withCollector = false;
+    bool idling;
     unsigned long clock;
-    GoalStates idleBuffer;
 
-    void remove_45_stator();
-    void deposit_45_stator();
-    void place_45_stator();
-
-    void next();
-
-    void changeBehavior(BehaviorStates new_behavior);
-    void changeGoal(GoalStates new_goal);
+    void nextBehavior();
+    void changeGoal();
 
 public:
     void init();
