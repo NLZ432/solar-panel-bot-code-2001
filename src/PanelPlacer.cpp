@@ -2,8 +2,10 @@
 
 void PanelPlacer::init()
 {
-    goalState = TO_ROOF;
+    goalState = TEST1;
     side = SIDE_45;
+
+    idling = true;
 
     fourbar.mount();
     ultrasonic.wake();
@@ -16,13 +18,19 @@ void PanelPlacer::init()
 
 void PanelPlacer::run()
 {
-    
+    if (idling)
+    {
+        if (buttonA.isPressed()) { idling = false; }
+        return;
+    }
+
     BehaviorStates behavior = goalList[goalState].instructions[instNum].behavior;
     int value = goalList[goalState].instructions[instNum].value;
 
     switch(behavior)
     {
-        case TO_INTERSECTION:
+        case TO_INTERSECTION:{
+            
             //int leffort, int righfort = linefollower.getEfforts();
             //chassis.setEfforts(leffort, righfort);
             //if (linefollower.intersection()){
@@ -30,8 +38,10 @@ void PanelPlacer::run()
                 //next();
             //}
             break;
+        }
 
-        case DRIVE_DISTANCE:
+        case DRIVE_DISTANCE:{
+
             //chassis.setDistance(value);
             //chassis.run()
             //if (chassis.arrived())
@@ -40,8 +50,10 @@ void PanelPlacer::run()
                 //next();  
             //}
             break;
+        }
 
-        case TO_STATION:
+        case TO_STATION:{
+
             //distancePID.setTarget(STATION_DISTACE)
             //float leffort, float righfort = linefollower.getEfforts();
             //int distance = ultrasonic.range();
@@ -52,8 +64,10 @@ void PanelPlacer::run()
                 //next();
             // }
             break;
+        }
         
-        case TO_PANEL:
+        case TO_PANEL:{
+
             //distancePID.setTarget(PANEL_DISTACE)
             //float leffort, float righfort = linefollower.getEfforts();
             //int distance = ultrasonic.range();
@@ -64,17 +78,21 @@ void PanelPlacer::run()
                 //next();
             // }
             break;
+        }
 
-        case SEEK_LINE:
+        case SEEK_LINE:{
+
             //chassis.setEfforts(30,30);
             //if (linefollower.line()){
                 //chassis.stop;
                 //next();
             //}
             break;
+        }
 
-        case POSITION:
-            //positionPID.setTarget(value);
+        case POSITION:{
+            //side_position = (side == SIDE_45) ? 45 : 25;
+            //positionPID.setTarget(side_position + value);
             //long count = fourbar.getCount;
             //effort = positionPID.seek(count);
             //fourbar.setEffort(effort);
@@ -82,28 +100,43 @@ void PanelPlacer::run()
                 // fourbar.setEffort(0);
                 //next();
             // }
+            
+            fourbar.setEffort(value);
 
-        case CLOSE:
-            //if (servo.close()
+            if (millis() - clock > 3000)
+            {
+                clock = millis();
+                nextBehavior();
+            }
+
+            break;
+        }
+
+        case CLOSE_GRIP:{
+           //if (servo.close()
+            break;
+        }
         
-        case OPEN:
-            //if (servo.open())
+        case OPEN_GRIP:{
 
-        case TURN: //positive value = turn left if 45, turn right if 25, vice versa
+            //if (servo.open())
+            break;
+        }
+
+        case TURN:{ //positive value = turn left if 45, turn right if 25, vice versa
+            
             int angle = value;
             
             if (side == SIDE_25) angle = -angle;
 
             //chassis.setTargetRotation(angle);
             //if (chassis.turn()) next();
+            break;
+            }
 
         case END:
             changeGoal();
             instNum = 0;
-            break;
-
-        case IDLE:
-            if (buttonA.isPressed()) { goalState = idleBuffer; }
             break;
 
         default:
@@ -120,6 +153,29 @@ void PanelPlacer::changeGoal()
         case TO_ROOF:
             goalState = withCollector ? REPLACE : REMOVE;
             break;
+        case REMOVE:
+            goalState = DEPOSIT;
+            break;
+        case DEPOSIT:
+            goalState = TO_ROOF;
+            break;
+        case REPLACE:
+            goalState = CROSS;
+            break;
+        case CROSS:
+            goalState = TO_ROOF;
+            break;
+
+        case TEST1:
+            goalState = TEST2;
+            break;
+
+        default:
+            if (millis() - clock > 2000)
+            {
+                clock = millis();
+                status();
+            }
     }
     Serial.print("CHANGED TO GOAL ");
     Serial.println(goalState);
@@ -132,17 +188,12 @@ void PanelPlacer::nextBehavior()
     Serial.print("CHANGED TO BEHAVIOR ");
     Serial.println(instNum);
 
-    if (STEP_MODE) {
-        idleBuffer = goalState;
-        goalState = IDLING; 
-    }
+    if (STEP_MODE) { idling = true; }
 
 }
 
 void PanelPlacer::status()
 {
-    clock = millis();
-
     Serial.print("goal: ");
     Serial.print(goalState);
     Serial.print("\tbehavior: ");
