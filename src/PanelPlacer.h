@@ -2,6 +2,7 @@
 #include <Chassis.h>
 #include <BlueMotor.h>
 #include <Rangefinder.h>
+#include <servo32u4.h>
 
 class PanelPlacer 
 {
@@ -11,6 +12,8 @@ class PanelPlacer
     Chassis chassis;
     BlueMotor fourbar;
     Rangefinder ultrasonic;
+    Servo32U4 gripper;
+
     Romi32U4ButtonA buttonA;
 
     enum GoalStates {
@@ -80,12 +83,13 @@ class PanelPlacer
     };
 
     goal TEST1_INST = {
-        { { POSITION,0 },
+        { { OPEN_GRIP },
+          { DRIVE_DISTANCE, -10 },
           { NEXT        } } 
         };
 
     goal TEST2_INST = {
-      { { POSITION,0 },
+      { { DRIVE_DISTANCE, 10 },
         { NEXT         } } 
         };
     

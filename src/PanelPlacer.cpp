@@ -8,6 +8,7 @@ void PanelPlacer::init()
     idling = false;
 
     fourbar.mount();
+    gripper.Attach();
     ultrasonic.wake();
     Serial.begin(9600);
 
@@ -42,13 +43,14 @@ void PanelPlacer::run()
 
         case DRIVE_DISTANCE:{
 
-            //chassis.setDistance(value);
-            //chassis.run()
-            //if (chassis.arrived())
-            //{
-                //chassis.stop();
-                //next();  
-            //}
+            chassis.setTargetDistance(float(value));
+            chassis.driveToTarget();
+            if (chassis.arrived())
+            {
+                chassis.stop();
+                chassis.resetEncoders();
+                nextBehavior();  
+            }
             break;
         }
 
@@ -115,7 +117,9 @@ void PanelPlacer::run()
         
         case OPEN_GRIP:{
 
-            //if (servo.open())
+            gripper.Write(2000U);
+            delay(1000);
+            nextBehavior();
             break;
         }
 

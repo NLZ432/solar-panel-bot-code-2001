@@ -4,10 +4,15 @@
 class Chassis
 {
 public:
+ void stop();
  void encoderDriveDistance(float inches);
  void encoderTurnAngle(float degrees);
  void resetEncoders();
  void readEncoders();
+ void setTargetDistance(float inches);
+ void driveToTarget();
+ bool arrived();
+
  const float wheelDiameter = 2.8;
  const float wheelTrack = 5.75;
 
@@ -18,4 +23,5 @@ public:
 private:
  Romi32U4Motors motors;
  Romi32U4Encoders encoders;
+ int16_t target_count;
 }; 

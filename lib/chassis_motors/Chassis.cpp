@@ -1,5 +1,10 @@
 #include "Chassis.h"
 
+void Chassis::stop()
+{
+  motors.setEfforts(0,0);
+}
+
 //to reset the encoders before each movement
 void Chassis::resetEncoders()
 {
@@ -15,6 +20,23 @@ void Chassis::readEncoders()
   Serial.print("\t");
   Serial.print("Right: ");
   Serial.println(encoders.getCountsRight());
+}
+
+void Chassis::setTargetDistance(float inches)
+{
+  float count = inches * float(COUNTS_PER_INCH);
+  target_count = int(count);
+}
+
+void Chassis::driveToTarget()
+{
+  const int EFFORT = (target_count > 0) ? 30 : -30;
+  motors.setEfforts(EFFORT, EFFORT);
+}
+
+bool Chassis::arrived()
+{
+  return (abs(encoders.getCountsRight()) > abs(target_count));
 }
 
 void Chassis::encoderDriveDistance(float inches)
