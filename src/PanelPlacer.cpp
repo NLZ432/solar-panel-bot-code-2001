@@ -1,19 +1,22 @@
 #include "PanelPlacer.h"
 
 
+IRDecoder decoder;
 
 void PanelPlacer::init()
 {
-    goalState = TEST1;
+    goalState = ULTRASONICTEST;
     side = SIDE_45;
     idling = false;
 
+    decoder.init();
     fourbar.mount();
     gripper.Init();
     gripper.Attach();
     ultrasonic.wake();
     linefollower.lineSetup();
     linefollower.setSetPoints(400, 300);
+
 
     
     Serial.begin(9600);
@@ -73,7 +76,7 @@ void PanelPlacer::run()
         case TO_STATION:{
 
             // //distancePID.setTarget(STATION_DISTACE)
-            // pidRange.setSetpoint(STATION_DISTANCE);
+            pidRange.setSetpoint(STATION_DISTANCE);
 
             // //float leffort, float righfort = linefollower.getEfforts();
             // //int distance = ultrasonic.range();
@@ -116,7 +119,7 @@ void PanelPlacer::run()
         case TO_PANEL:{
             
             // //distancePID.setTarget(PANEL_DISTACE)
-            // pidRange.setSetpoint(PANEL_DISTANCE);
+            pidRange.setSetpoint(PANEL_DISTANCE);
 
             // //float leffort, float righfort = linefollower.getEfforts();
             // //int distance = ultrasonic.range();
@@ -240,8 +243,14 @@ void PanelPlacer::run()
             }
 
         case WAIT:{
-
-            if (buttonC.isPressed()) { nextBehavior(); }
+            if (buttonC.isPressed()) 
+            { 
+                nextBehavior(); 
+            }
+            if(decoder.getKeyCode() == remotePlayPause)
+            {
+                nextBehavior();
+            }
             break;
         }
 
@@ -317,3 +326,4 @@ void PanelPlacer::status()
     Serial.print("\ttime: ");
     Serial.println(clock);
 }
+

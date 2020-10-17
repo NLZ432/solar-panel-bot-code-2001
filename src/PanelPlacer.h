@@ -1,4 +1,7 @@
+
 #include <Romi32U4.h>
+#include "RemoteConstants.h"
+#include <IRdecoder.h>
 #include <Chassis.h>
 #include <BlueMotor.h>
 #include <Rangefinder.h>
@@ -17,7 +20,7 @@ class PanelPlacer
     Servo32U4 gripper;
     Romi32U4Motors motors;
 
-    Romi32U4ButtonA buttonA;
+    Romi32U4ButtonC buttonC;
     PIDController pidRange {0.10, 0, 0};
     
     LineFollower linefollower{0.20, 0, 0, 800};
@@ -146,6 +149,8 @@ class PanelPlacer
     goal ULTRASONICTEST_INST = {
         {
             {TO_INTERSECTION},
+            {WAIT},
+            {DRIVE_DISTANCE, 2},
             {TURN, -90},
             {TO_PANEL},
             {NEXT     }
