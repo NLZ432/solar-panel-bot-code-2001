@@ -1,10 +1,8 @@
 #include "LineFollower.h"
 
 
-const uint8_t sensorCount = 4;
+const uint8_t sensorCount = 2;
 const int sensor9 = A6;
-const int sensor7 = A2;
-const int sensor5 = A3;
 const int sensor3 = A4;
 int pidtolerance = 10;
 float propK = 0.12;
@@ -32,15 +30,15 @@ void LineFollower::setSetPoints(int left, int right)
 void LineFollower::lineSetup()
 {
     qtr.setTypeAnalog();
-    qtr.setSensorPins((const uint8_t[]){sensor3, sensor5, sensor7, sensor9}, sensorCount);
-    qtr.setEmitterPin(2);
+    qtr.setSensorPins((const uint8_t[]){sensor3, sensor9}, sensorCount);
+    // qtr.setEmitterPin(2);
 }
 
 bool LineFollower::lineDetected()
 {
     qtr.read(sensorArray);
 
-    if(( (int)sensorArray[0] >= goal) || ( (int)sensorArray[3] >= goal ))
+    if(( (int)sensorArray[0] >= goal) || ( (int)sensorArray[1] >= goal ))
     {
         return true;
     }
@@ -53,7 +51,7 @@ bool LineFollower::intersectionDetected()
 {
     qtr.read(sensorArray);
 
-    if(( (int)sensorArray[0] >= goal ) && ( (int)sensorArray[3] >= goal ))
+    if(( (int)sensorArray[0] >= goal ) && ( (int)sensorArray[1] >= goal ))
     {
         return true;
     }
@@ -72,7 +70,7 @@ int LineFollower::getRightEffort()
 {
     // Reads the left motor to move the right motor
     qtr.read(sensorArray);
-    int result = (int) rightpid.calculate(sensorArray[3]);
+    int result = (int) rightpid.calculate(sensorArray[1]);
     return result;
 }
 
@@ -85,7 +83,7 @@ int LineFollower::readLeftValue()
 int LineFollower::readRightValue()
 {
     qtr.read(sensorArray);
-    return (int) sensorArray[3];
+    return (int) sensorArray[1];
 }
 
 
