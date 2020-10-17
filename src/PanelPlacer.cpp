@@ -12,8 +12,9 @@ void PanelPlacer::init()
     gripper.Init();
     gripper.Attach();
     ultrasonic.wake();
-    linefollower.setParams(1.0f,0.0f,0.0f,10);
     linefollower.lineSetup();
+    linefollower.setSetPoints(400, 300);
+
     
     Serial.begin(9600);
 
@@ -38,11 +39,11 @@ void PanelPlacer::run()
         case TO_INTERSECTION:{
             
             //int leffort, int righfort = linefollower.getEfforts();
-            int leftEffort = linefollower.getLeftEffort();
-            int rightEffort = linefollower.getRightEffort();
-
+            int leftEffort = linefollower.getLeftEffort() / 4;
+            int rightEffort = linefollower.getRightEffort() / 4;
+            
             //chassis.setEfforts(leffort, righfort);
-            motors.setEfforts(leftEffort, rightEffort);
+            motors.setEfforts(leftEffort + basespeed, rightEffort + basespeed);
 
             //if (linefollower.intersection()){
                 //chassis.stop();

@@ -20,7 +20,7 @@ class PanelPlacer
     Romi32U4ButtonC buttonC;
     PIDController pidRange {1.0, 0, 0};
     
-    LineFollower linefollower;
+    LineFollower linefollower{0.20, 0, 0, 800};
 
     int STATION_DISTANCE = 5;
     int PANEL_DISTANCE = 5;
@@ -70,7 +70,7 @@ class PanelPlacer
     goal TO_ROOF_INST = {
         { {TO_INTERSECTION},
           {TURN, -90},
-          {DRIVE_DISTANCE, 10},
+          {TO_PANEL},
           {NEXT     } } 
     };
 
@@ -145,8 +145,10 @@ class PanelPlacer
 
     goal ULTRASONICTEST_INST = {
         {
-            { TO_PANEL},
-            { NEXT }
+            {TO_INTERSECTION},
+            {TURN, -90},
+            {TO_PANEL},
+            {NEXT     }
         }
     };
 

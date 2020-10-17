@@ -36,7 +36,7 @@ void Chassis::driveToTarget()
 
 bool Chassis::arrived()
 {
-  return (abs(encoders.getCountsRight()) > abs(target_count));
+  return (abs(encoders.getCountsLeft()) > abs(target_count));
 }
 
 void Chassis::encoderDriveDistance(float inches)
