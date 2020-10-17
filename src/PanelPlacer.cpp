@@ -5,7 +5,7 @@ void PanelPlacer::init()
     goalState = TEST1;
     side = SIDE_45;
 
-    idling = true;
+    idling = false;
 
     fourbar.mount();
     ultrasonic.wake();
@@ -91,24 +91,20 @@ void PanelPlacer::run()
         }
 
         case POSITION:{
-            //side_position = (side == SIDE_45) ? 45 : 25;
-            //positionPID.setTarget(side_position + value);
-            //long count = fourbar.getCount;
-            //effort = positionPID.seek(count);
-            //fourbar.setEffort(effort);
-            //if (abs(value - count) < POSITION_THRESHOLD){
-                // fourbar.setEffort(0);
-                //next();
-            // }
-            
-            fourbar.setEffort(value);
 
-            if (millis() - clock > 3000)
+            float side_position = (side == SIDE_45) ? 2028 : 3200;
+            fourbar.pid.setSetpoint(side_position + float(value));
+
+            long count = fourbar.getPositionCount();
+            float effort = fourbar.pid.calculate(float(count));
+            effort = min(max(effort, -400),400);
+            fourbar.setEffort(int(effort));
+            Serial.println(effort);
+            if (abs(side_position - count) < POSITION_THRESHOLD)
             {
-                clock = millis();
+                fourbar.setEffort(0);
                 nextBehavior();
             }
-
             break;
         }
 
@@ -173,6 +169,7 @@ void PanelPlacer::changeGoal()
 
         case TEST1:
             goalState = TEST2;
+            side = SIDE_25;
             break;
         case TEST2:
             goalState = DONE;

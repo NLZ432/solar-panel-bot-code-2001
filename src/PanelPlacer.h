@@ -80,17 +80,13 @@ class PanelPlacer
     };
 
     goal TEST1_INST = {
-        { { POSITION,90 },
-          { POSITION,60 },
-          { POSITION,30 },
+        { { POSITION,0 },
           { NEXT        } } 
         };
 
     goal TEST2_INST = {
-        { { POSITION,-30 },
-          { POSITION,-60 },
-          { POSITION,-90 },
-          { NEXT         } } 
+      { { POSITION,0 },
+        { NEXT         } } 
         };
     
     goal DONE_INST = {
@@ -116,6 +112,8 @@ class PanelPlacer
 
     void nextBehavior();
     void changeGoal();
+
+    long POSITION_THRESHOLD = 30;
 
 public:
     void init();
