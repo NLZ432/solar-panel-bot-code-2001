@@ -17,13 +17,13 @@ class PanelPlacer
     Servo32U4 gripper;
     Romi32U4Motors motors;
 
-    Romi32U4ButtonC buttonC;
-    PIDController pidRange {1.0, 0, 0};
+    Romi32U4ButtonA buttonA;
+    PIDController pidRange {0.10, 0, 0};
     
     LineFollower linefollower{0.20, 0, 0, 800};
 
     int STATION_DISTANCE = 5;
-    int PANEL_DISTANCE = 5;
+    int PANEL_DISTANCE = 15;
     int basespeed = 50;
 
 

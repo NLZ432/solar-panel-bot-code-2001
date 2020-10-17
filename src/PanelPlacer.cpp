@@ -142,8 +142,8 @@ void PanelPlacer::run()
             ultrasonic.ping();
             if(ultrasonic.getDistanceCM() > pidRange.getSetpoint())
             {
-                int left = linefollower.getLeftEffort();
-                int right = linefollower.getRightEffort();
+                int left = linefollower.getLeftEffort() / 2;
+                int right = linefollower.getRightEffort() / 2;
                 motors.setEfforts(left + basespeed, right + basespeed);
             }
             else
