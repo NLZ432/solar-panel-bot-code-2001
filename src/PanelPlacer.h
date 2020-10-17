@@ -18,12 +18,12 @@ class PanelPlacer
     Romi32U4Motors motors;
 
     Romi32U4ButtonA buttonA;
-    PIDController pidRange {1.0, 0, 0};
+    PIDController pidRange {0.10, 0, 0};
     
     LineFollower linefollower{0.20, 0, 0, 800};
 
     int STATION_DISTANCE = 5;
-    int PANEL_DISTANCE = 5;
+    int PANEL_DISTANCE = 15;
     int basespeed = 50;
 
 
