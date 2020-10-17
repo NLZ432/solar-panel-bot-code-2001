@@ -86,8 +86,7 @@ void PanelPlacer::run()
             {
                 int left = linefollower.getLeftEffort();
                 int right = linefollower.getRightEffort();
-                motors.setEfforts(left + 50, right + 50);
-                // 50 is the base speed dof the motors; this is adjustable
+                motors.setEfforts(left + basespeed, right + basespeed);
             }
             else
             {
@@ -115,8 +114,7 @@ void PanelPlacer::run()
             {
                 int left = linefollower.getLeftEffort();
                 int right = linefollower.getRightEffort();
-                motors.setEfforts(left + 50, right + 50);
-                // 50 is the base speed dof the motors; this is adjustable
+                motors.setEfforts(left + basespeed, right + basespeed);
             }
             else
             {

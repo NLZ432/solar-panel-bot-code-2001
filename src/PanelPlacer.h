@@ -24,6 +24,7 @@ class PanelPlacer
 
     int STATION_DISTANCE = 5;
     int PANEL_DISTANCE = 5;
+    int basespeed = 50;
 
 
 
