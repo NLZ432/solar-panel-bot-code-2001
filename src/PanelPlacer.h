@@ -38,9 +38,7 @@ class PanelPlacer
         TEST2,
         DONE,
         ULTRASONICTEST,
-        CALIBRATE_TURN,
-        CALIBRATE_GRIP,
-        CALIBRATE_DRIVE
+        CALIBRATE_TURN
     } goalState;
 
     enum BehaviorStates { 
@@ -56,10 +54,7 @@ class PanelPlacer
         TURN,
         WAIT,
         NEXT,
-        FIN,
-        CALTURN,
-        CALGRIP,
-        CALDRIVE
+        FIN
     } behaviorState;
 
     struct instruction
@@ -148,18 +143,8 @@ class PanelPlacer
         };
     
     goal CALIBRATE_TURN_INST = {
-        { {CALTURN},
+        { {TURN, 180},
           {NEXT     } } 
-        };
-    
-    goal CALIBRATE_GRIP_INST = {
-        { {CALGRIP},
-          {NEXT   } }
-        };
-
-    goal CALIBRATE_DRIVE_INST = {
-        { {CALDRIVE},
-          {NEXT    } }
         };
 
     goal DONE_INST = {
@@ -177,7 +162,7 @@ class PanelPlacer
         }
     };
 
-    goal goalList[15] = { 
+    goal goalList[10] = { 
         TO_ROOF_INST,
         REMOVE_INST,
         DEPOSIT_INST,
@@ -187,9 +172,7 @@ class PanelPlacer
         TEST2_INST,
         DONE_INST,
         ULTRASONICTEST_INST,
-        CALIBRATE_TURN_INST,
-        CALIBRATE_GRIP_INST,
-        CALIBRATE_DRIVE_INST
+        CALIBRATE_TURN_INST
         };
 
     int instNum; //index of current instruction
@@ -203,17 +186,6 @@ class PanelPlacer
     void changeGoal();
 
     long POSITION_THRESHOLD = 30;
-    int CHASSIS_BASE_EFFORT = 100;
-    float LINE_FOLLOWER_WEIGHT = 0.25f;
-    float TURN_WEIGHT = 1.0f;
-    float SIDE_45_POS = 2028.0f;
-    float SIDE_25_POS = 3200.0f;
-    float DEPO_POS = 0.0f;
-    uint16_t GRIP_CLOSE_POS = 1845;
-    uint16_t GRIP_OPEN_POS = 1150;
-    float RIGHT_MOTOR_WEIGHT = 1.0f;
-    float LEFT_MOTOR_WEIGHT = 1.0f;
-
 
 public:
     void init();

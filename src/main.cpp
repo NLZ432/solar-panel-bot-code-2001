@@ -7,7 +7,7 @@ void setup() {
 
 void loop() {
  
-  Serial.print("hello");
+  
   bot.run();
 
   delay(100);

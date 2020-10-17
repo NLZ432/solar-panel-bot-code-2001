@@ -5,14 +5,10 @@ IRDecoder decoder;
 
 void PanelPlacer::init()
 {
-
-    goalState = CALIBRATE_TURN;
+    goalState = TO_ROOF;
     side = SIDE_45;
     idling = false;
-
-    chassis.BASE_EFFORT = CHASSIS_BASE_EFFORT;
-    chassis.weight_left = LEFT_MOTOR_WEIGHT;
-    chassis.weight_right = RIGHT_MOTOR_WEIGHT;
+    chassis.BASE_EFFORT = 100;
 
     decoder.init();
     fourbar.mount();
@@ -22,6 +18,8 @@ void PanelPlacer::init()
     linefollower.lineSetup();
     linefollower.setSetPoints(400, 300);
 
+
+    
     Serial.begin(9600);
 
     delay(3);
@@ -44,10 +42,10 @@ void PanelPlacer::run()
     {
         case TO_INTERSECTION:{
             
-            int leftEffort = float(linefollower.getLeftEffort()) * LINE_FOLLOWER_WEIGHT;
-            int rightEffort = float(linefollower.getRightEffort()) * LINE_FOLLOWER_WEIGHT;
+            int leftEffort = linefollower.getLeftEffort() / 4;
+            int rightEffort = linefollower.getRightEffort() / 4;
             
-            motors.setEfforts(leftEffort + chassis.BASE_EFFORT, rightEffort + chassis.BASE_EFFORT);
+            motors.setEfforts(leftEffort + chassis.BASE_EFFORT/2, rightEffort + chassis.BASE_EFFORT/2);
 
             if(linefollower.intersectionDetected())
             {
@@ -76,7 +74,7 @@ void PanelPlacer::run()
             {
                 int left = linefollower.getLeftEffort();
                 int right = linefollower.getRightEffort();
-                motors.setEfforts(left + chassis.BASE_EFFORT, right + chassis.BASE_EFFORT);
+                motors.setEfforts(left + chassis.BASE_EFFORT/2, right + chassis.BASE_EFFORT/2);
             }
             else
             {
@@ -94,9 +92,9 @@ void PanelPlacer::run()
             float dist = ultrasonic.getDistanceCM();
             if(dist > pidRange.getSetpoint())
             {
-                int left = linefollower.getLeftEffort() * LINE_FOLLOWER_WEIGHT;
-                int right = linefollower.getRightEffort() * LINE_FOLLOWER_WEIGHT;
-                motors.setEfforts(left + chassis.BASE_EFFORT, right + chassis.BASE_EFFORT);
+                int left = linefollower.getLeftEffort() / 2;
+                int right = linefollower.getRightEffort() / 2;
+                motors.setEfforts(left + chassis.BASE_EFFORT/2, right + chassis.BASE_EFFORT/2);
             }
             else
             {
@@ -122,7 +120,7 @@ void PanelPlacer::run()
 
         case POSITION:{
 
-            float side_position = (side == SIDE_45) ? SIDE_45_POS : SIDE_25_POS;
+            float side_position = (side == SIDE_45) ? 2028 : 3200;
             fourbar.pid.setSetpoint(side_position + float(value));
 
             fourbar.runToTarget();
@@ -135,7 +133,7 @@ void PanelPlacer::run()
         }
 
         case DEPO_POSITION:{
-            fourbar.pid.setSetpoint(DEPO_POS + float(value));
+            fourbar.pid.setSetpoint(float(value));
             fourbar.runToTarget();
             if (fourbar.arrived())
             {
@@ -146,7 +144,8 @@ void PanelPlacer::run()
         }
 
         case CLOSE_GRIP:{
-            gripper.Write(GRIP_CLOSE_POS);
+            servo_pos = 1845;
+            gripper.Write(servo_pos);
             delay(500);
             nextBehavior();
             break;
@@ -156,7 +155,8 @@ void PanelPlacer::run()
 
             //closed 1800
             //open 1150
-            gripper.Write(GRIP_OPEN_POS);
+            servo_pos = 1150;
+            gripper.Write(servo_pos);
             delay(500);
             nextBehavior();
             break;
@@ -210,24 +210,6 @@ void PanelPlacer::run()
             }
             break;
 
-        case CALTURN:
-            chassis.setTargetAngle(180);
-            chassis.turnToTarget();
-            chassis.readEncoders();
-            break;
-
-        case CALGRIP:
-            servo_pos = GRIP_CLOSE_POS;
-            gripper.Write(servo_pos);
-            delay(200);
-            servo_pos += 50;
-            if (servo_pos > GRIP_OPEN_POS) nextBehavior();
-            break;
-
-        case CALDRIVE:
-            motors.setEfforts(chassis.BASE_EFFORT, chassis.BASE_EFFORT);
-            chassis.readEncoders();
-            break;
     }
 
 }
