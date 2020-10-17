@@ -75,7 +75,14 @@ class PanelPlacer
     };
 
     goal REMOVE_INST = {
-        { {POSITION},
+        { {POSITION, 0},
+          {OPEN_GRIP},
+          {DRIVE_DISTANCE, 3},
+          {CLOSE_GRIP},
+          {WAIT},
+          {POSITION, 300},
+          {DRIVE_DISTANCE, -3},
+          {DEPO_POSITION, 0},
           {NEXT     } } 
     };
 
@@ -93,29 +100,38 @@ class PanelPlacer
     };
 
     goal REPLACE_INST = {
-        { { POSITION, 10 }, //collector position + 10 (location state)
-          { DRIVE_DISTANCE, 5 }, //drive forward 5 inches
-          { POSITION }, //collector position (location state)
-          { OPEN_GRIP }, //release collector
-          { NEXT       } } 
+        { {CLOSE_GRIP},
+          {POSITION, 300},
+          {DRIVE_DISTANCE, 3},
+          {POSITION, 0},
+          {WAIT},
+          {OPEN_GRIP},
+          {DRIVE_DISTANCE, -3},
+          {DEPO_POSITION, 0},
+          {NEXT     } } 
         };
 
     goal CROSS_INST = {
-        { {POSITION},
-          {NEXT     } } 
+        { {TO_INTERSECTION},
+          {TURN, 90},
+          {DRIVE_DISTANCE, 10},
+          {TURN, 90},
+          {DRIVE_DISTANCE, 3},
+          {SEEK_LINE},
+          {TURN, 90},
+          {NEXT     },
+        } 
     };
 
     goal TEST1_INST = {
         { {CLOSE_GRIP},
-          {DEPO_POSITION, 400},
+          {POSITION, 300},
           {DRIVE_DISTANCE, 3},
-          {DEPO_POSITION, 0},
+          {POSITION, 0},
           {WAIT},
           {OPEN_GRIP},
-          {WAIT},
-          {CLOSE_GRIP},
-          {DEPO_POSITION, 400},
           {DRIVE_DISTANCE, -3},
+          {DEPO_POSITION, 0},
           {NEXT     } } 
         };
 

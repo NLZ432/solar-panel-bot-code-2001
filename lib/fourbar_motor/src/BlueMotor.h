@@ -37,7 +37,7 @@ class BlueMotor
 
     const int CRUISING_SPEED = 3;
     const int DEFAULT_ACCELERATION = 0.5;
-    const int POSITION_THRESHOLD = 5;
+    const int POSITION_THRESHOLD = 50;
 
     long target_count = 0;
     float target_speed = 0;
