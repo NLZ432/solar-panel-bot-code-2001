@@ -134,7 +134,7 @@ class PanelPlacer
     };
 
     goal TEST1_INST = {
-        { {TURN, 180},
+        { {TURN, 90},
           {NEXT     } } 
         };
 

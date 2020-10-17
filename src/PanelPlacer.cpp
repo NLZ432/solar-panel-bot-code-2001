@@ -5,10 +5,10 @@ IRDecoder decoder;
 
 void PanelPlacer::init()
 {
-    goalState = TO_ROOF;
+    goalState = TEST1;
     side = SIDE_45;
     idling = false;
-    chassis.BASE_EFFORT = 100;
+    chassis.BASE_EFFORT = 60;
 
     decoder.init();
     fourbar.mount();
@@ -167,6 +167,8 @@ void PanelPlacer::run()
             int angle = value;
             
             if (side == SIDE_25) angle = -angle;
+
+            chassis.readEncoders();
 
             //chassis.setTargetRotation(angle);
             chassis.setTargetAngle(angle);

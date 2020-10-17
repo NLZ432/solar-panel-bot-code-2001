@@ -31,12 +31,15 @@ void Chassis::setTargetDistance(float inches)
 void Chassis::driveToTarget()
 {
   const int EFFORT = (target_count > 0) ? BASE_EFFORT : -BASE_EFFORT;
-  motors.setEfforts(EFFORT, EFFORT);
+  int right_effort = int(float(EFFORT) * RIGHT_WEIGHT);
+  int left_effort = int(float(EFFORT) * LEFT_WEIGHT);
+
+  motors.setEfforts(left_effort, right_effort);
 }
 
 bool Chassis::arrived()
 {
-  return (abs(encoders.getCountsLeft()) > abs(target_count));
+    return (abs(encoders.getCountsLeft()) > abs(target_count));
 }
 
 void Chassis::encoderDriveDistance(float inches)
@@ -76,12 +79,15 @@ void Chassis::encoderTurnAngle(float degrees)
 void Chassis::setTargetAngle(float degrees)
 {
   // float count = degrees * float(COUNTS_PER_DEGREE);
-  int count = (degrees / 90) * right_90_counts;
+  int count = (int(degrees) / 90) * right_90_counts;
   target_count = int(count);
 }
 
 void Chassis::turnToTarget()
 {
   const int EFFORT = (target_count > 0) ? BASE_EFFORT : -BASE_EFFORT;
-  motors.setEfforts(-1 * EFFORT, EFFORT);
+  int right_effort = int(float(EFFORT) * RIGHT_WEIGHT);
+  int left_effort = int(float(EFFORT) * LEFT_WEIGHT * ((target_count > 0) ? 0.9f : 1.1));
+
+  motors.setEfforts(-left_effort, right_effort);
 }
