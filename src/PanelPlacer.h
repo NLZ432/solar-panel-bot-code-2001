@@ -16,9 +16,7 @@ class PanelPlacer
     Rangefinder ultrasonic;
     Romi32U4ButtonA buttonA;
     PIDController pidRange {1.0, 0, 0};
-    PIDController leftpid;
-    PIDController rightpid;
-    QTRSensors qtr;
+    
     LineFollower linefollower;
 
 

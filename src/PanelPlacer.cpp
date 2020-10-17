@@ -35,11 +35,21 @@ void PanelPlacer::run()
         case TO_INTERSECTION:{
             
             //int leffort, int righfort = linefollower.getEfforts();
+            int leftEffort = linefollower.getLeftEffort();
+            int rightEffort = linefollower.getRightEffort();
+
             //chassis.setEfforts(leffort, righfort);
+            chassis.setEfforts(leftEffort, rightEffort);
+
             //if (linefollower.intersection()){
                 //chassis.stop();
                 //next();
             //}
+            if(linefollower.intersectionDetected())
+            {
+                chassis.stop();
+                nextBehavior();
+            }
             break;
         }
 
@@ -57,6 +67,8 @@ void PanelPlacer::run()
         case TO_STATION:{
 
             //distancePID.setTarget(STATION_DISTACE)
+            pidRange.setSetpoint(STATION_DISTANCE);
+
             //float leffort, float righfort = linefollower.getEfforts();
             //int distance = ultrasonic.range();
             //float controlFactor = distancePID(distance)
@@ -65,6 +77,20 @@ void PanelPlacer::run()
                 //chassis.stop();
                 //next();
             // }
+
+            rangefinder.ping();
+            if(rangefinder.getDistanceCM() > pidRange.getSetpoint())
+            {
+                int left = linefollower.getLeftEffort();
+                int right = linefollower.getRightEffort();
+                chassis.setEfforts(left + 50, right + 50);
+                // 50 is the base speed dof the motors; this is adjustable
+            }
+            else
+            {
+                chassis.setEfforts(0,0);
+                nextBehavior();
+            }
             break;
         }
         
@@ -74,28 +100,27 @@ void PanelPlacer::run()
             pidRange.setSetpoint(PANEL_DISTANCE);
 
             //float leffort, float righfort = linefollower.getEfforts();
-            float leftEffort = linefollower.getLeftEffort();
-            float rightEffort = linefollower.getRightEffort();
-
             //int distance = ultrasonic.range();
-            int distance = ultrasonic.getDistanceCM();
-
             //float controlFactor = distancePID.seek(distance)
-            float controlFactor = ultrasonic.seek(distance);
-
             //chassis.setEfforts(leffort * controlFactor, righfort * controlFactor);
-            chassis.setEfforts(leftEffort * controlFactor, rightEffort * controlFactor);
-
             //if (abs(distance - PANEL_DISTANCE) < DISTANCE_THRESHOLD){
                 //chassis.stop();
                 //next();
             // }
-
-            if(abs(distance - PANEL_DISTANCE) < pidRange.getTolerance())
+            rangefinder.ping();
+            if(rangefinder.getDistanceCM() > pidRange.getSetpoint())
             {
-                chassis.stop();
+                int left = linefollower.getLeftEffort();
+                int right = linefollower.getRightEffort();
+                chassis.setEfforts(left + 50, right + 50);
+                // 50 is the base speed dof the motors; this is adjustable
+            }
+            else
+            {
+                chassis.setEfforts(0,0);
                 nextBehavior();
             }
+            
             break;
         }
 
