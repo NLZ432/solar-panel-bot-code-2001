@@ -127,7 +127,6 @@ void BlueMotor::moveTo(long target_position)
 
     while (abs(error) > POSITION_THRESHOLD) {
         error = (target_position - getPositionDegrees());
-        Serial.println(error);
     }
 
     setEffort(0);
@@ -136,7 +135,6 @@ void BlueMotor::runToTarget()
 {
     float effort = pid.calculate(float(count));
     effort = min(max(effort, -400.0f),400.0f);
-    Serial.println(effort);
     setEffortWithoutDB(int(effort));
 }
 bool BlueMotor::arrived()
@@ -147,7 +145,6 @@ int BlueMotor::speedController(float target_speed){
     static float integral = 0.0f;
 
     float error = target_speed - getAngularVelocity();
-    Serial.print(getAngularVelocity());
     integral = (integral + error) * float(abs(error) < SPEED_I_CUTOFF); //integrate only if error within I range
     int control = int(error * speed_kP) + int(integral * speed_kI);
 

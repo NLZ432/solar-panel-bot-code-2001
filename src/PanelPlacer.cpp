@@ -5,9 +5,10 @@ IRDecoder decoder;
 
 void PanelPlacer::init()
 {
-    goalState = ULTRASONICTEST;
+    goalState = TO_ROOF;
     side = SIDE_45;
     idling = false;
+    chassis.BASE_EFFORT = 100;
 
     decoder.init();
     fourbar.mount();
@@ -44,7 +45,7 @@ void PanelPlacer::run()
             int leftEffort = linefollower.getLeftEffort() / 4;
             int rightEffort = linefollower.getRightEffort() / 4;
             
-            motors.setEfforts(leftEffort + basespeed, rightEffort + basespeed);
+            motors.setEfforts(leftEffort + chassis.BASE_EFFORT/2, rightEffort + chassis.BASE_EFFORT/2);
 
             if(linefollower.intersectionDetected())
             {
@@ -61,7 +62,6 @@ void PanelPlacer::run()
             if (chassis.arrived())
             {
                 chassis.stop();
-                chassis.resetEncoders();
                 nextBehavior();  
             }
             break;
@@ -74,7 +74,7 @@ void PanelPlacer::run()
             {
                 int left = linefollower.getLeftEffort();
                 int right = linefollower.getRightEffort();
-                motors.setEfforts(left + basespeed, right + basespeed);
+                motors.setEfforts(left + chassis.BASE_EFFORT/2, right + chassis.BASE_EFFORT/2);
             }
             else
             {
@@ -86,12 +86,15 @@ void PanelPlacer::run()
         
         case TO_PANEL:{
             
+            pidRange.setSetpoint(PANEL_DISTANCE);
+
             ultrasonic.ping();
-            if(ultrasonic.getDistanceCM() > pidRange.getSetpoint())
+            float dist = ultrasonic.getDistanceCM();
+            if(dist > pidRange.getSetpoint())
             {
                 int left = linefollower.getLeftEffort() / 2;
                 int right = linefollower.getRightEffort() / 2;
-                motors.setEfforts(left + basespeed, right + basespeed);
+                motors.setEfforts(left + chassis.BASE_EFFORT/2, right + chassis.BASE_EFFORT/2);
             }
             else
             {
@@ -143,8 +146,7 @@ void PanelPlacer::run()
         case CLOSE_GRIP:{
             servo_pos = 1845;
             gripper.Write(servo_pos);
-            Serial.println(servo_pos);
-            delay(3000);
+            delay(500);
             nextBehavior();
             break;
         }
@@ -155,8 +157,7 @@ void PanelPlacer::run()
             //open 1150
             servo_pos = 1150;
             gripper.Write(servo_pos);
-            Serial.println(servo_pos);
-            delay(3000);
+            delay(500);
             nextBehavior();
             break;
         }
@@ -172,6 +173,9 @@ void PanelPlacer::run()
 
             //if (chassis.turn()) next();
             chassis.turnToTarget();
+
+            // chassis.readEncoders();
+
             if (chassis.arrived())
             {
                 chassis.stop();
@@ -222,12 +226,14 @@ void PanelPlacer::changeGoal()
             break;
         case DEPOSIT:
             goalState = TO_ROOF;
+            withCollector = true;
             break;
         case REPLACE:
             goalState = CROSS;
             break;
         case CROSS:
             goalState = TO_ROOF;
+            side = (side == SIDE_45) ? SIDE_25 : SIDE_45;
             break;
 
         case TEST1:
@@ -248,6 +254,7 @@ void PanelPlacer::changeGoal()
 void PanelPlacer::nextBehavior()
 {
     instNum++;
+    chassis.resetEncoders();
 
     Serial.print("CHANGED TO BEHAVIOR ");
     Serial.println(instNum);

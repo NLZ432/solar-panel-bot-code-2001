@@ -25,11 +25,8 @@ class PanelPlacer
     
     LineFollower linefollower{0.20, 0, 0, 800};
 
-    int STATION_DISTANCE = 5;
-    int PANEL_DISTANCE = 15;
-    int basespeed = 30;
-
-
+    int STATION_DISTANCE = 20.0f;
+    int PANEL_DISTANCE = 20.0f;
 
     enum GoalStates {
         TO_ROOF,
@@ -40,7 +37,8 @@ class PanelPlacer
         TEST1,
         TEST2,
         DONE,
-        ULTRASONICTEST
+        ULTRASONICTEST,
+        CALIBRATE_TURN
     } goalState;
 
     enum BehaviorStates { 
@@ -71,26 +69,33 @@ class PanelPlacer
     };
 
     goal TO_ROOF_INST = {
-        { {TO_INTERSECTION},
-          {TURN, -90},
-          {TO_PANEL},
-          {NEXT     } } 
+    {  
+       {DEPO_POSITION, 200},
+       {TO_INTERSECTION},
+       {DRIVE_DISTANCE, 2},
+       {TURN, -90},
+       {TO_PANEL},
+       {NEXT     }}
     };
 
     goal REMOVE_INST = {
-        { {POSITION, 0},
+        { {POSITION, 50},
           {OPEN_GRIP},
-          {DRIVE_DISTANCE, 3},
+          {DRIVE_DISTANCE, 2},
           {CLOSE_GRIP},
           {WAIT},
-          {POSITION, 300},
-          {DRIVE_DISTANCE, -3},
-          {DEPO_POSITION, 0},
+          {POSITION, 350},
+          {DRIVE_DISTANCE, -2},
+          {DEPO_POSITION, 200},
           {NEXT     } } 
     };
 
     goal DEPOSIT_INST = {
-        { {DEPO_POSITION, 20},
+        { {TURN, -180},
+          {TO_INTERSECTION},
+          {TURN, 90},
+          {TO_STATION},
+          {DEPO_POSITION, 20},
           {DRIVE_DISTANCE, 3},
           {DEPO_POSITION, 0},
           {WAIT},
@@ -99,6 +104,7 @@ class PanelPlacer
           {CLOSE_GRIP},
           {DEPO_POSITION, 20},
           {DRIVE_DISTANCE, -3},
+          {TURN, 180},
           {NEXT     } } 
     };
 
@@ -106,19 +112,19 @@ class PanelPlacer
         { {CLOSE_GRIP},
           {POSITION, 300},
           {DRIVE_DISTANCE, 3},
-          {POSITION, 0},
+          {POSITION, 50},
           {WAIT},
           {OPEN_GRIP},
           {DRIVE_DISTANCE, -3},
-          {DEPO_POSITION, 0},
-          {TURN, -90},
+          {DEPO_POSITION, 400},
+          {TURN, -180},
           {NEXT     } } 
         };
 
     goal CROSS_INST = {
         { {TO_INTERSECTION},
           {TURN, 90},
-          {DRIVE_DISTANCE, 10},
+          {DRIVE_DISTANCE, 7},
           {TURN, 90},
           {DRIVE_DISTANCE, 3},
           {SEEK_LINE},
@@ -128,7 +134,7 @@ class PanelPlacer
     };
 
     goal TEST1_INST = {
-        { {TO_INTERSECTION},
+        { {TURN, 180},
           {NEXT     } } 
         };
 
@@ -136,6 +142,11 @@ class PanelPlacer
       { { NEXT         } } 
         };
     
+    goal CALIBRATE_TURN_INST = {
+        { {TURN, 180},
+          {NEXT     } } 
+        };
+
     goal DONE_INST = {
         { {FIN} } 
         };
@@ -151,7 +162,7 @@ class PanelPlacer
         }
     };
 
-    goal goalList[9] = { 
+    goal goalList[10] = { 
         TO_ROOF_INST,
         REMOVE_INST,
         DEPOSIT_INST,
@@ -160,7 +171,8 @@ class PanelPlacer
         TEST1_INST,
         TEST2_INST,
         DONE_INST,
-        ULTRASONICTEST_INST
+        ULTRASONICTEST_INST,
+        CALIBRATE_TURN_INST
         };
 
     int instNum; //index of current instruction
