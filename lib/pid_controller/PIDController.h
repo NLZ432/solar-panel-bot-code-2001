@@ -1,4 +1,5 @@
-#include <Romi32U4.h>
+#pragma once
+
 class PIDController
 {
     public:
@@ -6,6 +7,7 @@ class PIDController
         PIDController(float p, float i, float d);
         void setPID(float p, float i, float d);
         float calculate(float currentValue);
+        float ultraCalculate(float currentValue);
         void setSetpoint(float target);
         void setTolerance(float tolerance);
         bool onTarget(float currentValue);
@@ -19,7 +21,7 @@ class PIDController
         float sum;
         float setpoint;
         float tolerance;
-        float output;
-        int pidClock = 0;
+
+
 
 };

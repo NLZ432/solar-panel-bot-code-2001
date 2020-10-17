@@ -21,6 +21,6 @@ class Rangefinder
         bool arrived();
 
     private:
-        PIDController pid {1.0, 0, 0};
+        PIDController pidRange {1.0, 0, 0};
         Romi32U4Motors motors;
 };

@@ -19,11 +19,11 @@ void Rangefinder::echoISR()
     if (digitalRead(echoPin))
     {
         //if the pin has gone HIGH, record the time
-        echoTime = millis();
+        echoTime = micros();
     }
     else
     {
-        range = (millis() - echoTime) * 17; 
+        range = (micros() - echoTime) * 0.017; 
         //if the pin has gone LOW, multiply the time it was HIGH by half the ~speed
         //of sound in cm/ms to get the ~range in cm.
     }
@@ -52,17 +52,17 @@ float Rangefinder::getDistanceCM()
 int Rangefinder::seek(int setpoint)
 {
     // setpoint is the desired distance from object/wall
-    if(pid.getSetpoint() != setpoint)
+    if(pidRange.getSetpoint() != setpoint)
     {
-        pid.setSetpoint(setpoint);
+        pidRange.setSetpoint(setpoint);
     }
 
     // returns ddesired motor efforts
-    return pid.calculate(getDistanceCM());
+    return pidRange.calculate(getDistanceCM());
 }
 
 
 bool Rangefinder::arrived()
 {
-    return (abs(getDistanceCM() - pid.getSetpoint()) <= pid.getTolerance());
+    return (abs(getDistanceCM() - pidRange.getSetpoint()) <= pidRange.getTolerance());
 }
