@@ -1,14 +1,17 @@
 #include "PanelPlacer.h"
 
+
+
 void PanelPlacer::init()
 {
-    goalState = TEST1;
+    goalState = ULTRASONICTEST;
     side = SIDE_45;
 
-    idling = true;
+    idling = false;
 
     fourbar.mount();
     ultrasonic.wake();
+    
     Serial.begin(9600);
 
     delay(3);
@@ -41,7 +44,6 @@ void PanelPlacer::run()
         }
 
         case DRIVE_DISTANCE:{
-
             //chassis.setDistance(value);
             //chassis.run()
             //if (chassis.arrived())
@@ -67,16 +69,33 @@ void PanelPlacer::run()
         }
         
         case TO_PANEL:{
-
+            
             //distancePID.setTarget(PANEL_DISTACE)
+            pidRange.setSetpoint(PANEL_DISTANCE);
+
             //float leffort, float righfort = linefollower.getEfforts();
+            float leftEffort = linefollower.getLeftEffort();
+            float rightEffort = linefollower.getRightEffort();
+
             //int distance = ultrasonic.range();
+            int distance = ultrasonic.getDistanceCM();
+
             //float controlFactor = distancePID.seek(distance)
+            float controlFactor = ultrasonic.seek(distance);
+
             //chassis.setEfforts(leffort * controlFactor, righfort * controlFactor);
+            chassis.setEfforts(leftEffort * controlFactor, rightEffort * controlFactor);
+
             //if (abs(distance - PANEL_DISTANCE) < DISTANCE_THRESHOLD){
                 //chassis.stop();
                 //next();
             // }
+
+            if(abs(distance - PANEL_DISTANCE) < pidRange.getTolerance())
+            {
+                chassis.stop();
+                nextBehavior();
+            }
             break;
         }
 
@@ -87,6 +106,14 @@ void PanelPlacer::run()
                 //chassis.stop;
                 //next();
             //}
+            chassis.setEfforts(30,30);
+            if(linefollower.lineDetected())
+            {
+                chassis.stop();
+                nextBehavior();
+            }
+
+
             break;
         }
 
@@ -175,6 +202,9 @@ void PanelPlacer::changeGoal()
             goalState = TEST2;
             break;
         case TEST2:
+            goalState = DONE;
+            break;
+        case ULTRASONICTEST:
             goalState = DONE;
             break;
     }

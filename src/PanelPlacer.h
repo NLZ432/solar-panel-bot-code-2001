@@ -2,6 +2,9 @@
 #include <Chassis.h>
 #include <BlueMotor.h>
 #include <Rangefinder.h>
+#include <PIDController.h>
+#include <LineFollower.h>
+
 
 class PanelPlacer 
 {
@@ -12,6 +15,13 @@ class PanelPlacer
     BlueMotor fourbar;
     Rangefinder ultrasonic;
     Romi32U4ButtonA buttonA;
+    PIDController pidRange {1.0, 0, 0};
+    PIDController leftpid;
+    PIDController rightpid;
+    QTRSensors qtr;
+    LineFollower linefollower;
+
+
 
     enum GoalStates {
         TO_ROOF,
@@ -21,7 +31,8 @@ class PanelPlacer
         CROSS,
         TEST1,
         TEST2,
-        DONE
+        DONE,
+        ULTRASONICTEST
     } goalState;
 
     enum BehaviorStates { 
@@ -97,7 +108,14 @@ class PanelPlacer
         { {FIN} } 
         };
 
-    goal goalList[8] = { 
+    goal ULTRASONICTEST_INST = {
+        {
+            { TO_PANEL},
+            { NEXT }
+        }
+    };
+
+    goal goalList[9] = { 
         TO_ROOF_INST,
         REMOVE_INST,
         DEPOSIT_INST,
@@ -105,7 +123,8 @@ class PanelPlacer
         CROSS_INST,
         TEST1_INST,
         TEST2_INST,
-        DONE_INST
+        DONE_INST,
+        ULTRASONICTEST_INST
         };
 
     int instNum; //index of current instruction
