@@ -189,7 +189,16 @@ void PanelPlacer::run()
             if (side == SIDE_25) angle = -angle;
 
             //chassis.setTargetRotation(angle);
+            chassis.setTargetAngle(angle);
+
             //if (chassis.turn()) next();
+            chassis.turnToTarget();
+            if (chassis.arrived())
+            {
+                chassis.stop();
+                chassis.resetEncoders();
+                nextBehavior();  
+            }
             break;
             }
 
