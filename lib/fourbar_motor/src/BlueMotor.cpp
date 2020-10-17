@@ -22,7 +22,7 @@ void BlueMotor::mount()
     attachInterrupt(digitalPinToInterrupt(encoderPinA),encoderISR,CHANGE);
     attachInterrupt(digitalPinToInterrupt(encoderPinB),encoderISR,CHANGE);
 
-    pid.setPID(3, 0.5, 0.7);
+    pid.setPID(4, 0.0, 0.0);
 
     TCCR1A = 0xA8;
     TCCR1B = 0x11;

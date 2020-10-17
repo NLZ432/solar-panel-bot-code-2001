@@ -70,7 +70,14 @@ class PanelPlacer
     };
 
     goal REMOVE_INST = {
-        { {POSITION},
+        { {POSITION, 0},
+          {OPEN_GRIP},
+          {DRIVE_DISTANCE, 3},
+          {CLOSE_GRIP},
+          {WAIT},
+          {POSITION, 300},
+          {DRIVE_DISTANCE, -3},
+          {DEPO_POSITION, 0},
           {NEXT     } } 
     };
 
@@ -101,16 +108,14 @@ class PanelPlacer
     };
 
     goal TEST1_INST = {
-        { {CLOSE_GRIP},
-          {DEPO_POSITION, 400},
-          {DRIVE_DISTANCE, 3},
-          {DEPO_POSITION, 0},
-          {WAIT},
+        { {POSITION, 0},
           {OPEN_GRIP},
-          {WAIT},
+          {DRIVE_DISTANCE, 3},
           {CLOSE_GRIP},
-          {DEPO_POSITION, 400},
+          {WAIT},
+          {POSITION, 300},
           {DRIVE_DISTANCE, -3},
+          {DEPO_POSITION, 0},
           {NEXT     } } 
         };
 
