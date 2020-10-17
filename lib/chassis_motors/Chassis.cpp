@@ -30,7 +30,7 @@ void Chassis::setTargetDistance(float inches)
 
 void Chassis::driveToTarget()
 {
-  const int EFFORT = (target_count > 0) ? 30 : -30;
+  const int EFFORT = (target_count > 0) ? 80 : -80;
   motors.setEfforts(EFFORT, EFFORT);
 }
 

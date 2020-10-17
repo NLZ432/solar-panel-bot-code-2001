@@ -56,7 +56,8 @@ public:
     void setTargetSpeed(float speed);
 
     void moveTo(long position);
-    void run();
+    void runToTarget();
+    bool arrived();
 
     int speedController(float target_speed);
     float positionController();

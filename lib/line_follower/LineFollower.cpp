@@ -20,20 +20,26 @@ LineFollower::LineFollower(float kp, float ki, float kd, int threshold)
     rightpid.setPID(kp, ki, kd);
     goal = threshold;
 }
-
+LineFollower::LineFollower(){}
 
 void LineFollower::setSetPoints(int left, int right)
 {
     leftpid.setSetpoint(left);
     rightpid.setSetpoint(right);
+}
 
+void LineFollower::setParams(float kp, float ki, float kd, int threshold)
+{
+    leftpid.setPID(kp, ki, kd);
+    rightpid.setPID(kp, ki, kd);
+    goal = threshold;
 }
 
 void LineFollower::lineSetup()
 {
     qtr.setTypeAnalog();
     qtr.setSensorPins((const uint8_t[]){sensor3, sensor5, sensor7, sensor9}, sensorCount);
-    qtr.setEmitterPin(2);
+    qtr.setEmitterPin(22);
 }
 
 bool LineFollower::lineDetected()

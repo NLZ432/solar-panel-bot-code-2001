@@ -22,7 +22,7 @@ void BlueMotor::mount()
     attachInterrupt(digitalPinToInterrupt(encoderPinA),encoderISR,CHANGE);
     attachInterrupt(digitalPinToInterrupt(encoderPinB),encoderISR,CHANGE);
 
-    pid.setPID(1.75, 0.01, 0.7);
+    pid.setPID(3, 0.5, 0.7);
 
     TCCR1A = 0xA8;
     TCCR1B = 0x11;
@@ -132,14 +132,16 @@ void BlueMotor::moveTo(long target_position)
 
     setEffort(0);
 }
-void BlueMotor::run()
+void BlueMotor::runToTarget()
 {
-    target_speed = positionController();
-    int control_effort = speedController(target_speed);
-
-    Serial.println(control_effort);
-
-    setEffort(control_effort);
+    float effort = pid.calculate(float(count));
+    effort = min(max(effort, -400.0f),400.0f);
+    Serial.println(effort);
+    setEffortWithoutDB(int(effort));
+}
+bool BlueMotor::arrived()
+{
+    return (abs(long(pid.getSetpoint()) - count) < POSITION_THRESHOLD);
 }
 int BlueMotor::speedController(float target_speed){
     static float integral = 0.0f;

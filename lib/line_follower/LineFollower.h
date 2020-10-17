@@ -11,8 +11,10 @@ class LineFollower
     public:
 
         LineFollower(float kp, float ki, float kd, int threshold);
+        LineFollower();
         void setSetPoints(int left, int right);
         void lineSetup();
+        void setParams(float kp, float ki, float kd, int threshold);
 
         bool lineDetected();
         bool intersectionDetected();
@@ -20,10 +22,6 @@ class LineFollower
         int getRightEffort();
         int readLeftValue();
         int readRightValue();
-
-
-
-
 
     private:
         QTRSensors qtr;

@@ -16,7 +16,7 @@ class PanelPlacer
     Rangefinder ultrasonic;
     Servo32U4 gripper;
 
-    Romi32U4ButtonA buttonA;
+    Romi32U4ButtonC buttonC;
     PIDController pidRange {1.0, 0, 0};
     
     LineFollower linefollower;
@@ -38,6 +38,7 @@ class PanelPlacer
     enum BehaviorStates { 
         TO_INTERSECTION,
         DRIVE_DISTANCE,
+        DEPO_POSITION,
         TO_STATION,
         CLOSE_GRIP,
         SEEK_LINE,
@@ -45,6 +46,7 @@ class PanelPlacer
         POSITION,
         TO_PANEL,
         TURN,
+        WAIT,
         NEXT,
         FIN
     } behaviorState;
@@ -57,7 +59,7 @@ class PanelPlacer
 
     struct goal
     {
-        instruction instructions[10];
+        instruction instructions[20];
     };
 
     goal TO_ROOF_INST = {
@@ -73,7 +75,15 @@ class PanelPlacer
     };
 
     goal DEPOSIT_INST = {
-        { {POSITION},
+        { {DEPO_POSITION, 20},
+          {DRIVE_DISTANCE, 3},
+          {DEPO_POSITION, 0},
+          {WAIT},
+          {OPEN_GRIP},
+          {WAIT},
+          {CLOSE_GRIP},
+          {DEPO_POSITION, 20},
+          {DRIVE_DISTANCE, -3},
           {NEXT     } } 
     };
 
@@ -91,15 +101,17 @@ class PanelPlacer
     };
 
     goal TEST1_INST = {
-        { { OPEN_GRIP },
-          { CLOSE_GRIP },
-          { OPEN_GRIP },
-          { CLOSE_GRIP },
-          { OPEN_GRIP },
-          { CLOSE_GRIP },
-          { OPEN_GRIP },
-          { CLOSE_GRIP },
-          { NEXT        } } 
+        { {CLOSE_GRIP},
+          {DEPO_POSITION, 400},
+          {DRIVE_DISTANCE, 3},
+          {DEPO_POSITION, 0},
+          {WAIT},
+          {OPEN_GRIP},
+          {WAIT},
+          {CLOSE_GRIP},
+          {DEPO_POSITION, 400},
+          {DRIVE_DISTANCE, -3},
+          {NEXT     } } 
         };
 
     goal TEST2_INST = {
