@@ -72,3 +72,15 @@ void Chassis::encoderTurnAngle(float degrees)
  }
  motors.setEfforts(0, 0);
 } 
+
+void Chassis::setTargetAngle(float degrees)
+{
+  float count = degrees * float(COUNTS_PER_DEGREE);
+  target_count = int(count);
+}
+
+void Chassis::turnToTarget()
+{
+  const int EFFORT = (target_count > 0) ? 30 : -30;
+  motors.setEfforts(-1 * EFFORT, EFFORT);
+}

@@ -10,7 +10,9 @@ public:
  void resetEncoders();
  void readEncoders();
  void setTargetDistance(float inches);
+ void setTargetAngle(float degrees);    // new
  void driveToTarget();
+ void turnToTarget();   // new
  bool arrived();
 
  const float wheelDiameter = 2.8;
