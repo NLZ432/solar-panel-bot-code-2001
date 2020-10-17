@@ -84,13 +84,18 @@ class PanelPlacer
 
     goal TEST1_INST = {
         { { OPEN_GRIP },
-          { DRIVE_DISTANCE, -10 },
+          { CLOSE_GRIP },
+          { OPEN_GRIP },
+          { CLOSE_GRIP },
+          { OPEN_GRIP },
+          { CLOSE_GRIP },
+          { OPEN_GRIP },
+          { CLOSE_GRIP },
           { NEXT        } } 
         };
 
     goal TEST2_INST = {
-      { { DRIVE_DISTANCE, 10 },
-        { NEXT         } } 
+      { { NEXT         } } 
         };
     
     goal DONE_INST = {
@@ -113,6 +118,7 @@ class PanelPlacer
     bool withCollector = false;
     bool idling;
     unsigned long clock;
+    uint16_t servo_pos = 1800;
 
     void nextBehavior();
     void changeGoal();

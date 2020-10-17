@@ -8,6 +8,7 @@ void PanelPlacer::init()
     idling = false;
 
     fourbar.mount();
+    gripper.Init();
     gripper.Attach();
     ultrasonic.wake();
     Serial.begin(9600);
@@ -111,14 +112,22 @@ void PanelPlacer::run()
         }
 
         case CLOSE_GRIP:{
-           //if (servo.close()
+            servo_pos = 1845;
+            gripper.Write(servo_pos);
+            Serial.println(servo_pos);
+            delay(3000);
+            nextBehavior();
             break;
         }
         
         case OPEN_GRIP:{
 
-            gripper.Write(2000U);
-            delay(1000);
+            //closed 1800
+            //open 1250
+            servo_pos = 1250;
+            gripper.Write(servo_pos);
+            Serial.println(servo_pos);
+            delay(3000);
             nextBehavior();
             break;
         }
