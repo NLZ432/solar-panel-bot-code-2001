@@ -6,7 +6,6 @@ void PanelPlacer::init()
 {
     goalState = ULTRASONICTEST;
     side = SIDE_45;
-
     idling = false;
 
     fourbar.mount();
@@ -41,7 +40,7 @@ void PanelPlacer::run()
             int rightEffort = linefollower.getRightEffort();
 
             //chassis.setEfforts(leffort, righfort);
-            chassis.setEfforts(leftEffort, rightEffort);
+            motors.setEfforts(leftEffort, rightEffort);
 
             //if (linefollower.intersection()){
                 //chassis.stop();
@@ -49,7 +48,7 @@ void PanelPlacer::run()
             //}
             if(linefollower.intersectionDetected())
             {
-                chassis.stop();
+                motors.setEfforts(0, 0);
                 nextBehavior();
             }
             break;
@@ -82,17 +81,17 @@ void PanelPlacer::run()
                 //next();
             // }
 
-            rangefinder.ping();
-            if(rangefinder.getDistanceCM() > pidRange.getSetpoint())
+            ultrasonic.ping();
+            if(ultrasonic.getDistanceCM() > pidRange.getSetpoint())
             {
                 int left = linefollower.getLeftEffort();
                 int right = linefollower.getRightEffort();
-                chassis.setEfforts(left + 50, right + 50);
+                motors.setEfforts(left + 50, right + 50);
                 // 50 is the base speed dof the motors; this is adjustable
             }
             else
             {
-                chassis.setEfforts(0,0);
+                motors.setEfforts(0,0);
                 nextBehavior();
             }
             break;
@@ -111,17 +110,17 @@ void PanelPlacer::run()
                 //chassis.stop();
                 //next();
             // }
-            rangefinder.ping();
-            if(rangefinder.getDistanceCM() > pidRange.getSetpoint())
+            ultrasonic.ping();
+            if(ultrasonic.getDistanceCM() > pidRange.getSetpoint())
             {
                 int left = linefollower.getLeftEffort();
                 int right = linefollower.getRightEffort();
-                chassis.setEfforts(left + 50, right + 50);
+                motors.setEfforts(left + 50, right + 50);
                 // 50 is the base speed dof the motors; this is adjustable
             }
             else
             {
-                chassis.setEfforts(0,0);
+                motors.setEfforts(0,0);
                 nextBehavior();
             }
             
@@ -135,10 +134,10 @@ void PanelPlacer::run()
                 //chassis.stop;
                 //next();
             //}
-            chassis.setEfforts(30,30);
+            motors.setEfforts(30,30);
             if(linefollower.lineDetected())
             {
-                chassis.stop();
+                motors.setEfforts(0, 0);
                 nextBehavior();
             }
 
