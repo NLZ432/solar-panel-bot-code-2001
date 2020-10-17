@@ -15,11 +15,16 @@ class PanelPlacer
     BlueMotor fourbar;
     Rangefinder ultrasonic;
     Servo32U4 gripper;
+    Romi32U4Motors motors;
 
     Romi32U4ButtonC buttonC;
     PIDController pidRange {1.0, 0, 0};
     
     LineFollower linefollower;
+
+    int STATION_DISTANCE = 5;
+    int PANEL_DISTANCE = 5;
+    int basespeed = 50;
 
 
 

@@ -6,7 +6,6 @@ void PanelPlacer::init()
 {
     goalState = TEST1;
     side = SIDE_45;
-
     idling = false;
 
     fourbar.mount();
@@ -38,23 +37,23 @@ void PanelPlacer::run()
     {
         case TO_INTERSECTION:{
             
-            // //int leffort, int righfort = linefollower.getEfforts();
-            // int leftEffort = linefollower.getLeftEffort();
-            // int rightEffort = linefollower.getRightEffort();
+            //int leffort, int righfort = linefollower.getEfforts();
+            int leftEffort = linefollower.getLeftEffort();
+            int rightEffort = linefollower.getRightEffort();
 
-            // //chassis.setEfforts(leffort, righfort);
-            // chassis.setEfforts(leftEffort, rightEffort);
+            //chassis.setEfforts(leffort, righfort);
+            motors.setEfforts(leftEffort, rightEffort);
 
-            // //if (linefollower.intersection()){
-            //     //chassis.stop();
-            //     //next();
-            // //}
-            // if(linefollower.intersectionDetected())
-            // {
-            //     chassis.stop();
-            //     nextBehavior();
-            // }
-            // break;
+            //if (linefollower.intersection()){
+                //chassis.stop();
+                //next();
+            //}
+            if(linefollower.intersectionDetected())
+            {
+                motors.setEfforts(0, 0);
+                nextBehavior();
+            }
+            break;
         }
 
         case DRIVE_DISTANCE:{
@@ -97,6 +96,19 @@ void PanelPlacer::run()
             //     chassis.setEfforts(0,0);
             //     nextBehavior();
             // }
+
+            ultrasonic.ping();
+            if(ultrasonic.getDistanceCM() > pidRange.getSetpoint())
+            {
+                int left = linefollower.getLeftEffort();
+                int right = linefollower.getRightEffort();
+                motors.setEfforts(left + basespeed, right + basespeed);
+            }
+            else
+            {
+                motors.setEfforts(0,0);
+                nextBehavior();
+            }
             break;
         }
         
@@ -126,23 +138,35 @@ void PanelPlacer::run()
             //     chassis.setEfforts(0,0);
             //     nextBehavior();
             // }
+            ultrasonic.ping();
+            if(ultrasonic.getDistanceCM() > pidRange.getSetpoint())
+            {
+                int left = linefollower.getLeftEffort();
+                int right = linefollower.getRightEffort();
+                motors.setEfforts(left + basespeed, right + basespeed);
+            }
+            else
+            {
+                motors.setEfforts(0,0);
+                nextBehavior();
+            }
             
             break;
         }
 
         case SEEK_LINE:{
 
-            // //chassis.setEfforts(30,30);
-            // //if (linefollower.line()){
-            //     //chassis.stop;
-            //     //next();
-            // //}
-            // chassis.setEfforts(30,30);
-            // if(linefollower.lineDetected())
-            // {
-            //     chassis.stop();
-            //     nextBehavior();
-            // }
+            //chassis.setEfforts(30,30);
+            //if (linefollower.line()){
+                //chassis.stop;
+                //next();
+            //}
+            motors.setEfforts(30,30);
+            if(linefollower.lineDetected())
+            {
+                motors.setEfforts(0, 0);
+                nextBehavior();
+            }
 
 
             break;
@@ -201,7 +225,16 @@ void PanelPlacer::run()
             if (side == SIDE_25) angle = -angle;
 
             //chassis.setTargetRotation(angle);
+            chassis.setTargetAngle(angle);
+
             //if (chassis.turn()) next();
+            chassis.turnToTarget();
+            if (chassis.arrived())
+            {
+                chassis.stop();
+                chassis.resetEncoders();
+                nextBehavior();  
+            }
             break;
             }
 
