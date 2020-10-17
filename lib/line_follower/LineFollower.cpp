@@ -2,12 +2,9 @@
 
 
 const uint8_t sensorCount = 2;
-const int sensor9 = A6;
-const int sensor3 = A4;
+const int sensor9 = A2;
+const int sensor3 = A3;
 int pidtolerance = 10;
-float propK = 0.12;
-float derK = 0.0;
-float intK = 0.0;
 
 
 uint16_t sensorArray[sensorCount];
@@ -31,7 +28,7 @@ void LineFollower::lineSetup()
 {
     qtr.setTypeAnalog();
     qtr.setSensorPins((const uint8_t[]){sensor3, sensor9}, sensorCount);
-    // qtr.setEmitterPin(2);
+    // qtr.setEmitterPin(22);
 }
 
 bool LineFollower::lineDetected()
