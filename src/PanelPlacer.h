@@ -107,8 +107,15 @@ class PanelPlacer
         };
 
     goal CROSS_INST = {
-        { {POSITION},
-          {NEXT     } } 
+        { {TO_INTERSECTION},
+          {TURN, 90},
+          {DRIVE_DISTANCE, 10},
+          {TURN, 90},
+          {DRIVE_DISTANCE, 3},
+          {SEEK_LINE},
+          {TURN, 90},
+          {NEXT     },
+        } 
     };
 
     goal TEST1_INST = {
