@@ -39,8 +39,8 @@ void PanelPlacer::run()
         case TO_INTERSECTION:{
             
             //int leffort, int righfort = linefollower.getEfforts();
-            int leftEffort = linefollower.getLeftEffort() / 2;
-            int rightEffort = linefollower.getRightEffort() / 2;
+            int leftEffort = linefollower.getLeftEffort() / 4;
+            int rightEffort = linefollower.getRightEffort() / 4;
             
             //chassis.setEfforts(leffort, righfort);
             motors.setEfforts(leftEffort + basespeed, rightEffort + basespeed);
@@ -52,7 +52,7 @@ void PanelPlacer::run()
             if(linefollower.intersectionDetected())
             {
                 motors.setEfforts(0, 0);
-                // nextBehavior();
+                nextBehavior();
             }
             break;
         }
