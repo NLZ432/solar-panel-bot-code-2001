@@ -4,7 +4,7 @@
 #include <Rangefinder.h>
 #include <PIDController.h>
 #include <LineFollower.h>
-
+#include <servo32u4.h>
 
 class PanelPlacer 
 {
@@ -14,6 +14,8 @@ class PanelPlacer
     Chassis chassis;
     BlueMotor fourbar;
     Rangefinder ultrasonic;
+    Servo32U4 gripper;
+
     Romi32U4ButtonA buttonA;
     PIDController pidRange {1.0, 0, 0};
     
@@ -89,17 +91,19 @@ class PanelPlacer
     };
 
     goal TEST1_INST = {
-        { { POSITION,90 },
-          { POSITION,60 },
-          { POSITION,30 },
+        { { OPEN_GRIP },
+          { CLOSE_GRIP },
+          { OPEN_GRIP },
+          { CLOSE_GRIP },
+          { OPEN_GRIP },
+          { CLOSE_GRIP },
+          { OPEN_GRIP },
+          { CLOSE_GRIP },
           { NEXT        } } 
         };
 
     goal TEST2_INST = {
-        { { POSITION,-30 },
-          { POSITION,-60 },
-          { POSITION,-90 },
-          { NEXT         } } 
+      { { NEXT         } } 
         };
     
     goal DONE_INST = {
@@ -130,9 +134,12 @@ class PanelPlacer
     bool withCollector = false;
     bool idling;
     unsigned long clock;
+    uint16_t servo_pos = 1800;
 
     void nextBehavior();
     void changeGoal();
+
+    long POSITION_THRESHOLD = 30;
 
 public:
     void init();

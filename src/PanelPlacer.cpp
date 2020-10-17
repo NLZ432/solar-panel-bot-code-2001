@@ -10,6 +10,8 @@ void PanelPlacer::init()
     idling = false;
 
     fourbar.mount();
+    gripper.Init();
+    gripper.Attach();
     ultrasonic.wake();
     
     Serial.begin(9600);
@@ -54,13 +56,15 @@ void PanelPlacer::run()
         }
 
         case DRIVE_DISTANCE:{
-            //chassis.setDistance(value);
-            //chassis.run()
-            //if (chassis.arrived())
-            //{
-                //chassis.stop();
-                //next();  
-            //}
+
+            chassis.setTargetDistance(float(value));
+            chassis.driveToTarget();
+            if (chassis.arrived())
+            {
+                chassis.stop();
+                chassis.resetEncoders();
+                nextBehavior();  
+            }
             break;
         }
 
@@ -143,35 +147,41 @@ void PanelPlacer::run()
         }
 
         case POSITION:{
-            //side_position = (side == SIDE_45) ? 45 : 25;
-            //positionPID.setTarget(side_position + value);
-            //long count = fourbar.getCount;
-            //effort = positionPID.seek(count);
-            //fourbar.setEffort(effort);
-            //if (abs(value - count) < POSITION_THRESHOLD){
-                // fourbar.setEffort(0);
-                //next();
-            // }
-            
-            fourbar.setEffort(value);
 
-            if (millis() - clock > 3000)
+            float side_position = (side == SIDE_45) ? 2028 : 3200;
+            fourbar.pid.setSetpoint(side_position + float(value));
+
+            long count = fourbar.getPositionCount();
+            float effort = fourbar.pid.calculate(float(count));
+            effort = min(max(effort, -400),400);
+            fourbar.setEffort(int(effort));
+            Serial.println(effort);
+            if (abs(side_position - count) < POSITION_THRESHOLD)
             {
-                clock = millis();
+                fourbar.setEffort(0);
                 nextBehavior();
             }
-
             break;
         }
 
         case CLOSE_GRIP:{
-           //if (servo.close()
+            servo_pos = 1845;
+            gripper.Write(servo_pos);
+            Serial.println(servo_pos);
+            delay(3000);
+            nextBehavior();
             break;
         }
         
         case OPEN_GRIP:{
 
-            //if (servo.open())
+            //closed 1800
+            //open 1250
+            servo_pos = 1250;
+            gripper.Write(servo_pos);
+            Serial.println(servo_pos);
+            delay(3000);
+            nextBehavior();
             break;
         }
 
@@ -225,6 +235,7 @@ void PanelPlacer::changeGoal()
 
         case TEST1:
             goalState = TEST2;
+            side = SIDE_25;
             break;
         case TEST2:
             goalState = DONE;

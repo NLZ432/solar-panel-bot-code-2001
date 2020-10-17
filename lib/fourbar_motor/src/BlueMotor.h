@@ -1,8 +1,10 @@
 #pragma once
 #include <Romi32U4.h>
+#include <PIDController.h>
 
 class BlueMotor 
 {
+    
     const int PWMOutPin = 11;
     const int AIN2 = 4;
     const int AIN1 = 13;
@@ -44,6 +46,9 @@ class BlueMotor
     
 
 public: 
+
+    PIDController pid;
+
     void setEffort(int effort);
     int setEffortWithoutDB(int effort);
 
