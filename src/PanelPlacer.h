@@ -27,7 +27,7 @@ class PanelPlacer
 
     int STATION_DISTANCE = 5;
     int PANEL_DISTANCE = 15;
-    int basespeed = 50;
+    int basespeed = 30;
 
 
 
@@ -111,6 +111,7 @@ class PanelPlacer
           {OPEN_GRIP},
           {DRIVE_DISTANCE, -3},
           {DEPO_POSITION, 0},
+          {TURN, -90},
           {NEXT     } } 
         };
 
@@ -127,14 +128,7 @@ class PanelPlacer
     };
 
     goal TEST1_INST = {
-        { {CLOSE_GRIP},
-          {POSITION, 300},
-          {DRIVE_DISTANCE, 3},
-          {POSITION, 0},
-          {WAIT},
-          {OPEN_GRIP},
-          {DRIVE_DISTANCE, -3},
-          {DEPO_POSITION, 0},
+        { {TO_INTERSECTION},
           {NEXT     } } 
         };
 
