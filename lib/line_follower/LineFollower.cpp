@@ -77,6 +77,13 @@ int LineFollower::getRightEffort()
     return result;
 }
 
+void LineFollower::linefollow()
+{
+    int left = getLeftEffort() / 2;
+    int right = getRightEffort() / 2;
+    motors.setEfforts(left + basespeed, right + basespeed);
+}
+
 int LineFollower::readLeftValue()
 {
     qtr.read(sensorArray);

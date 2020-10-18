@@ -2,6 +2,7 @@
 #include <QTRSensors.h>
 #include <Romi32U4.h>
 #include <PIDController.h>
+#include <Rangefinder.h>
 #include "Chassis.h"
 
 
@@ -16,6 +17,8 @@ class LineFollower
         void lineSetup();
         void setParams(float kp, float ki, float kd, int threshold);
 
+        void linefollow();
+
         bool lineDetected();
         bool intersectionDetected();
         int getLeftEffort();
@@ -27,6 +30,9 @@ class LineFollower
         QTRSensors qtr;
         PIDController leftpid;
         PIDController rightpid;
+        Romi32U4Motors motors;
+        Rangefinder ultrasonic;
+        int basespeed = 50;
         int goal;
 
         
