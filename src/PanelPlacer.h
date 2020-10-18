@@ -25,8 +25,8 @@ class PanelPlacer
     
     LineFollower linefollower{0.20, 0, 0, 800};
 
-    int STATION_DISTANCE = 20.0f;
-    int PANEL_DISTANCE = 20.0f;
+    int STATION_DISTANCE = 14.0f;
+    int PANEL_DISTANCE = 14.0f;
 
     enum GoalStates {
         TO_ROOF,
@@ -79,19 +79,20 @@ class PanelPlacer
     };
 
     goal REMOVE_INST = {
-        { {POSITION, 50},
+        { {POSITION},
           {OPEN_GRIP},
-          {DRIVE_DISTANCE, 2},
+          {DRIVE_DISTANCE, 5},
+          {WAIT},
           {CLOSE_GRIP},
           {WAIT},
-          {POSITION, 350},
-          {DRIVE_DISTANCE, -2},
-          {DEPO_POSITION, 200},
+          {POSITION, -100},
+          {DRIVE_DISTANCE, -5},
+          {DEPO_POSITION, 400},
           {NEXT     } } 
     };
 
     goal DEPOSIT_INST = {
-        { {TURN, -180},
+        { {TURN, -150},
           {TO_INTERSECTION},
           {TURN, 90},
           {TO_STATION},
@@ -110,14 +111,15 @@ class PanelPlacer
 
     goal REPLACE_INST = {
         { {CLOSE_GRIP},
-          {POSITION, 300},
-          {DRIVE_DISTANCE, 3},
-          {POSITION, 50},
           {WAIT},
+          {POSITION, 350},
+          {DRIVE_DISTANCE, 7},
+          {WAIT},
+          {POSITION, 0},
           {OPEN_GRIP},
-          {DRIVE_DISTANCE, -3},
-          {DEPO_POSITION, 400},
-          {TURN, -180},
+          {DRIVE_DISTANCE, -7},
+          {DEPO_POSITION, 0},
+          {CLOSE_GRIP},
           {NEXT     } } 
         };
 
@@ -134,8 +136,7 @@ class PanelPlacer
     };
 
     goal TEST1_INST = {
-        { {TURN, 90},
-          {NEXT     } } 
+        {{ TO_PANEL }}
         };
 
     goal TEST2_INST = {

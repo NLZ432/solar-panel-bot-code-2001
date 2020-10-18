@@ -24,8 +24,8 @@ public:
  const int16_t right_90_counts = 774; 
 
  int BASE_EFFORT;
- float RIGHT_WEIGHT = 1.0f;
- float LEFT_WEIGHT = 1.27f;
+ float RIGHT_WEIGHT = 1.2f;
+ float LEFT_WEIGHT = 1.4f;
 
 private:
  Romi32U4Motors motors;

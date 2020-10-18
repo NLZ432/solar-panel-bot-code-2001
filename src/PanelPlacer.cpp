@@ -5,7 +5,7 @@ IRDecoder decoder;
 
 void PanelPlacer::init()
 {
-    goalState = TEST1;
+    goalState = TO_ROOF;
     side = SIDE_45;
     idling = false;
     chassis.BASE_EFFORT = 60;
@@ -42,10 +42,10 @@ void PanelPlacer::run()
     {
         case TO_INTERSECTION:{
             
-            int leftEffort = linefollower.getLeftEffort() / 4;
-            int rightEffort = linefollower.getRightEffort() / 4;
+            int leftEffort = linefollower.getLeftEffort();
+            int rightEffort = linefollower.getRightEffort();
             
-            motors.setEfforts(leftEffort + chassis.BASE_EFFORT/2, rightEffort + chassis.BASE_EFFORT/2);
+            motors.setEfforts(leftEffort + chassis.BASE_EFFORT, rightEffort + chassis.BASE_EFFORT);
 
             if(linefollower.intersectionDetected())
             {
@@ -74,7 +74,7 @@ void PanelPlacer::run()
             {
                 int left = linefollower.getLeftEffort();
                 int right = linefollower.getRightEffort();
-                motors.setEfforts(left + chassis.BASE_EFFORT/2, right + chassis.BASE_EFFORT/2);
+                motors.setEfforts(left + chassis.BASE_EFFORT, right + chassis.BASE_EFFORT);
             }
             else
             {
@@ -90,11 +90,12 @@ void PanelPlacer::run()
 
             ultrasonic.ping();
             float dist = ultrasonic.getDistanceCM();
+            Serial.print(dist);
             if(dist > pidRange.getSetpoint())
             {
                 int left = linefollower.getLeftEffort() / 2;
-                int right = linefollower.getRightEffort() / 2;
-                motors.setEfforts(left + chassis.BASE_EFFORT/2, right + chassis.BASE_EFFORT/2);
+                int right = linefollower.getRightEffort() /2;
+                motors.setEfforts(left + chassis.BASE_EFFORT, right + chassis.BASE_EFFORT);
             }
             else
             {
@@ -120,8 +121,10 @@ void PanelPlacer::run()
 
         case POSITION:{
 
-            float side_position = (side == SIDE_45) ? 2028 : 3200;
-            fourbar.pid.setSetpoint(side_position + float(value));
+            float side_position = (side == SIDE_45) ? 1900.0f : 3200.0f;
+            float val = (side == SIDE_45) ? float(value) : -float(value);
+            float position = side_position + val;
+            fourbar.pid.setSetpoint(position);
 
             fourbar.runToTarget();
             if (fourbar.arrived())

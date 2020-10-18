@@ -87,7 +87,7 @@ void Chassis::turnToTarget()
 {
   const int EFFORT = (target_count > 0) ? BASE_EFFORT : -BASE_EFFORT;
   int right_effort = int(float(EFFORT) * RIGHT_WEIGHT);
-  int left_effort = int(float(EFFORT) * LEFT_WEIGHT * ((target_count > 0) ? 0.9f : 1.1));
+  int left_effort = int(float(EFFORT) * LEFT_WEIGHT);
 
   motors.setEfforts(-left_effort, right_effort);
 }
