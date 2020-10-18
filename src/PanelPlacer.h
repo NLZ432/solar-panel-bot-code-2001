@@ -136,11 +136,15 @@ class PanelPlacer
     };
 
     goal TEST1_INST = {
-        {{ TO_PANEL }}
+        {{ WAIT },
+         { NEXT }}
         };
 
     goal TEST2_INST = {
-      { { NEXT         } } 
+      { { TURN, 90 },
+        { WAIT },
+        { TURN, -90 },
+        { NEXT } } 
         };
     
     goal CALIBRATE_TURN_INST = {
@@ -187,6 +191,10 @@ class PanelPlacer
     void changeGoal();
 
     long POSITION_THRESHOLD = 30;
+    float RIGHT_WEIGHT = 1.0;
+    float LEFT_WEIGHT = 1.0;
+    float LINEFOLLOWERWEIGHT = 0.5;
+    float BASE_EFFORT = 50;
 
 public:
     void init();

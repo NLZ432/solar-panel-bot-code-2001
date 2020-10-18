@@ -13,9 +13,8 @@ class LineFollower
 
         LineFollower(float kp, float ki, float kd, int threshold);
         LineFollower();
-        void setSetPoints(int left, int right);
         void lineSetup();
-        void setParams(float kp, float ki, float kd, int threshold);
+        void setParams(int base, float bothWeight, int leftSetpoint, int rightSetpoint, float rightWeight, float leftWeight);
 
         void linefollow();
 
@@ -32,19 +31,11 @@ class LineFollower
         PIDController rightpid;
         Romi32U4Motors motors;
         Rangefinder ultrasonic;
-        int basespeed = 50;
+        int basespeed;
         int goal;
 
-        
-
-        
-
-
-
-
-
-
-
-
+        float WEIGHT_RIGHT;
+        float WEIGHT_LEFT;
+        float WEIGHT_BOTH;
 
 };

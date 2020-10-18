@@ -17,17 +17,14 @@ LineFollower::LineFollower(float kp, float ki, float kd, int threshold)
 }
 LineFollower::LineFollower(){}
 
-void LineFollower::setSetPoints(int left, int right)
+void LineFollower::setParams(int base, float bothWeight, int leftSetpoint, int rightSetpoint, float rightWeight, float leftWeight)
 {
-    leftpid.setSetpoint(left);
-    rightpid.setSetpoint(right);
-}
-
-void LineFollower::setParams(float kp, float ki, float kd, int threshold)
-{
-    leftpid.setPID(kp, ki, kd);
-    rightpid.setPID(kp, ki, kd);
-    goal = threshold;
+    basespeed = base;
+    leftpid.setSetpoint(leftSetpoint);
+    rightpid.setSetpoint(rightSetpoint);
+    WEIGHT_BOTH = bothWeight;
+    WEIGHT_RIGHT = rightWeight;
+    WEIGHT_LEFT = leftWeight;
 }
 
 void LineFollower::lineSetup()
@@ -47,8 +44,6 @@ bool LineFollower::lineDetected()
     }
     return false;
 }
-
-
 
 bool LineFollower::intersectionDetected()
 {
@@ -79,9 +74,14 @@ int LineFollower::getRightEffort()
 
 void LineFollower::linefollow()
 {
-    int left = getLeftEffort() / 2;
-    int right = getRightEffort() / 2;
-    motors.setEfforts(left + basespeed, right + basespeed);
+    int left = getLeftEffort();
+    int right = getRightEffort();
+    
+    left = int( float(left) * float(WEIGHT_RIGHT) * float(WEIGHT_BOTH) ) + basespeed;
+    right = int( float(right) * float(WEIGHT_LEFT) * float(WEIGHT_BOTH) + basespeed);
+
+    motors.setEfforts(left, right);
+
 }
 
 int LineFollower::readLeftValue()

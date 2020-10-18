@@ -5,10 +5,10 @@ IRDecoder decoder;
 
 void PanelPlacer::init()
 {
-    goalState = TO_ROOF;
+    goalState = TEST1;
     side = SIDE_45;
     idling = false;
-    chassis.BASE_EFFORT = 60;
+    chassis.BASE_EFFORT = BASE_EFFORT;
 
     decoder.init();
     fourbar.mount();
@@ -16,10 +16,8 @@ void PanelPlacer::init()
     gripper.Attach();
     ultrasonic.wake();
     linefollower.lineSetup();
-    linefollower.setSetPoints(400, 300);
+    linefollower.setParams(BASE_EFFORT, LINEFOLLOWERWEIGHT, 400, 300, RIGHT_WEIGHT, LEFT_WEIGHT);
 
-
-    
     Serial.begin(9600);
 
     delay(3);
@@ -42,10 +40,7 @@ void PanelPlacer::run()
     {
         case TO_INTERSECTION:{
             
-            int leftEffort = linefollower.getLeftEffort();
-            int rightEffort = linefollower.getRightEffort();
-            
-            motors.setEfforts(leftEffort + chassis.BASE_EFFORT, rightEffort + chassis.BASE_EFFORT);
+            linefollower.linefollow();
 
             if(linefollower.intersectionDetected())
             {
@@ -72,9 +67,7 @@ void PanelPlacer::run()
             ultrasonic.ping();
             if(ultrasonic.getDistanceCM() > pidRange.getSetpoint())
             {
-                int left = linefollower.getLeftEffort();
-                int right = linefollower.getRightEffort();
-                motors.setEfforts(left + chassis.BASE_EFFORT, right + chassis.BASE_EFFORT);
+                linefollower.linefollow();
             }
             else
             {
@@ -93,9 +86,7 @@ void PanelPlacer::run()
             Serial.print(dist);
             if(dist > pidRange.getSetpoint())
             {
-                int left = linefollower.getLeftEffort() / 2;
-                int right = linefollower.getRightEffort() /2;
-                motors.setEfforts(left + chassis.BASE_EFFORT, right + chassis.BASE_EFFORT);
+                linefollower.linefollow();
             }
             else
             {
