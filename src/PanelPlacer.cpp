@@ -5,10 +5,13 @@ IRDecoder decoder;
 
 void PanelPlacer::init()
 {
-    goalState = TEST1;
+    goalState = TO_ROOF;
     side = SIDE_45;
     idling = false;
+
     chassis.BASE_EFFORT = BASE_EFFORT;
+    chassis.RIGHT_WEIGHT = RIGHT_WEIGHT;
+    chassis.LEFT_WEIGHT = LEFT_WEIGHT;
 
     decoder.init();
     fourbar.mount();
@@ -27,9 +30,17 @@ void PanelPlacer::init()
 
 void PanelPlacer::run()
 {
-    if (idling)
+    // Serial.print(goalState);
+    // if (idling)
+    // {
+    //     if (buttonC.isPressed()) { idling = false; }
+    //     return;
+    // }
+    if (ESTOPPED)
     {
-        if (buttonC.isPressed()) { idling = false; }
+        if(decoder.getKeyCode() == remoteBack) { ESTOPPED = false; }
+        chassis.stop();
+        fourbar.setEffort(0);
         return;
     }
 
@@ -46,6 +57,7 @@ void PanelPlacer::run()
             {
                 motors.setEfforts(0, 0);
                 nextBehavior();
+                
             }
             break;
         }
@@ -90,7 +102,7 @@ void PanelPlacer::run()
             }
             else
             {
-                motors.setEfforts(0,0);
+                chassis.stop();
                 nextBehavior();
             }
             
@@ -112,7 +124,7 @@ void PanelPlacer::run()
 
         case POSITION:{
 
-            float side_position = (side == SIDE_45) ? 1900.0f : 3200.0f;
+            float side_position = (side == SIDE_45) ? POSITION_45 : POSITION_25;
             float val = (side == SIDE_45) ? float(value) : -float(value);
             float position = side_position + val;
             fourbar.pid.setSetpoint(position);
@@ -162,15 +174,8 @@ void PanelPlacer::run()
             
             if (side == SIDE_25) angle = -angle;
 
-            chassis.readEncoders();
-
-            //chassis.setTargetRotation(angle);
             chassis.setTargetAngle(angle);
-
-            //if (chassis.turn()) next();
             chassis.turnToTarget();
-
-            // chassis.readEncoders();
 
             if (chassis.arrived())
             {
@@ -206,8 +211,32 @@ void PanelPlacer::run()
             }
             break;
 
+        case CALTURN:
+            int angle = value;
+            
+            if (side == SIDE_25) angle = -angle;
+            chassis.readEncoders();
+            chassis.setTargetAngle(angle);
+            chassis.turnToTarget();
+            if (chassis.arrived())
+            {
+                chassis.stop();
+                chassis.resetEncoders();
+                nextBehavior();  
+            }
+            break;
     }
 
+    if(decoder.getKeyCode() == remoteStopMode)
+    {
+        ESTOPPED = true;
+        delay(1000);
+    }
+    
+    // if(decoder.getKeyCode() == remoteSetup)
+    // {
+    //     goalState = RESET;
+    // }
 }
 
 void PanelPlacer::changeGoal()
@@ -236,10 +265,10 @@ void PanelPlacer::changeGoal()
             goalState = TEST2;
             side = SIDE_25;
             break;
-        case TEST2:
-            goalState = DONE;
-            break;
         case ULTRASONICTEST:
+        // case RESET:
+        case CALIBRATE_TURN:
+        case TEST2:
             goalState = DONE;
             break;
     }

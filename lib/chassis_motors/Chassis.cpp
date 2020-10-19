@@ -79,7 +79,7 @@ void Chassis::encoderTurnAngle(float degrees)
 void Chassis::setTargetAngle(float degrees)
 {
   // float count = degrees * float(COUNTS_PER_DEGREE);
-  int count = (int(degrees) / 90) * right_90_counts;
+  int count = int((degrees / 90.0f) * float(right_90_counts));
   target_count = int(count);
 }
 

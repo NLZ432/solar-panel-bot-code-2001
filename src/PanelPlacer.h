@@ -25,8 +25,6 @@ class PanelPlacer
     
     LineFollower linefollower{0.20, 0, 0, 800};
 
-    int STATION_DISTANCE = 14.0f;
-    int PANEL_DISTANCE = 14.0f;
 
     enum GoalStates {
         TO_ROOF,
@@ -39,6 +37,7 @@ class PanelPlacer
         DONE,
         ULTRASONICTEST,
         CALIBRATE_TURN
+        // RESET
     } goalState;
 
     enum BehaviorStates { 
@@ -54,7 +53,8 @@ class PanelPlacer
         TURN,
         WAIT,
         NEXT,
-        FIN
+        FIN,
+        CALTURN
     } behaviorState;
 
     struct instruction
@@ -69,13 +69,14 @@ class PanelPlacer
     };
 
     goal TO_ROOF_INST = {
-    {  
-       {DEPO_POSITION, 200},
-       {TO_INTERSECTION},
-       {DRIVE_DISTANCE, 2},
-       {TURN, -90},
-       {TO_PANEL},
-       {NEXT     }}
+    {   { WAIT },
+        {DEPO_POSITION, 400},
+        {TO_INTERSECTION},
+        {DRIVE_DISTANCE, 2},
+        {TURN, -70},
+        {TO_PANEL},
+        {NEXT     }
+        }
     };
 
     goal REMOVE_INST = {
@@ -136,19 +137,24 @@ class PanelPlacer
     };
 
     goal TEST1_INST = {
-        {{ WAIT },
-         { NEXT }}
+        {   { WAIT },
+        {DEPO_POSITION, 400},
+        {TO_INTERSECTION},
+        {DRIVE_DISTANCE, 2},
+        {TURN, -70},
+        {TO_PANEL},
+        {NEXT     }
+        }
         };
 
     goal TEST2_INST = {
-      { { TURN, 90 },
-        { WAIT },
-        { TURN, -90 },
-        { NEXT } } 
-        };
+    {   {DEPO_POSITION, 0},
+        {NEXT     }   }
+    };
     
     goal CALIBRATE_TURN_INST = {
-        { {TURN, 180},
+        { {WAIT},
+          {CALTURN, 180},
           {NEXT     } } 
         };
 
@@ -167,7 +173,14 @@ class PanelPlacer
         }
     };
 
-    goal goalList[10] = { 
+    // goal RESET_INST = {
+    //     {
+    //         {DEPO_POSITION, 0},
+    //         {NEXT}
+    //     }
+    // };
+
+    goal goalList[11] = { 
         TO_ROOF_INST,
         REMOVE_INST,
         DEPOSIT_INST,
@@ -186,6 +199,7 @@ class PanelPlacer
     bool idling;
     unsigned long clock;
     uint16_t servo_pos = 1800;
+    bool ESTOPPED = false;
 
     void nextBehavior();
     void changeGoal();
@@ -195,6 +209,10 @@ class PanelPlacer
     float LEFT_WEIGHT = 1.0;
     float LINEFOLLOWERWEIGHT = 0.5;
     float BASE_EFFORT = 50;
+    int STATION_DISTANCE = 20.0f;
+    int PANEL_DISTANCE = 20.0f;
+    float POSITION_45 = 1900.0f;
+    float POSITION_25 = 3200.0f;
 
 public:
     void init();
