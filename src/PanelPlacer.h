@@ -37,7 +37,6 @@ class PanelPlacer
         DONE,
         ULTRASONICTEST,
         CALIBRATE_TURN
-        // RESET
     } goalState;
 
     enum BehaviorStates { 
@@ -70,10 +69,11 @@ class PanelPlacer
 
     goal TO_ROOF_INST = {
     {   { WAIT },
-        {DEPO_POSITION, 400},
+        {DEPO_POSITION, 700},
         {TO_INTERSECTION},
-        {DRIVE_DISTANCE, 2},
+        {DRIVE_DISTANCE, 3},
         {TURN, -70},
+        { WAIT },
         {TO_PANEL},
         {NEXT     }
         }
@@ -82,22 +82,23 @@ class PanelPlacer
     goal REMOVE_INST = {
         { {POSITION},
           {OPEN_GRIP},
-          {DRIVE_DISTANCE, 5},
+          {DRIVE_DISTANCE, 2},
           {WAIT},
           {CLOSE_GRIP},
           {WAIT},
-          {POSITION, -100},
+          {POSITION, 200},
           {DRIVE_DISTANCE, -5},
           {DEPO_POSITION, 400},
           {NEXT     } } 
     };
 
     goal DEPOSIT_INST = {
-        { {TURN, -150},
+        { {TURN, -170},
           {TO_INTERSECTION},
-          {TURN, 90},
+          {DRIVE_DISTANCE, 2},
+          {TURN, 70},
           {TO_STATION},
-          {DEPO_POSITION, 20},
+          {DEPO_POSITION, 400},
           {DRIVE_DISTANCE, 3},
           {DEPO_POSITION, 0},
           {WAIT},
@@ -173,13 +174,6 @@ class PanelPlacer
         }
     };
 
-    // goal RESET_INST = {
-    //     {
-    //         {DEPO_POSITION, 0},
-    //         {NEXT}
-    //     }
-    // };
-
     goal goalList[11] = { 
         TO_ROOF_INST,
         REMOVE_INST,
@@ -207,12 +201,13 @@ class PanelPlacer
     long POSITION_THRESHOLD = 30;
     float RIGHT_WEIGHT = 1.0;
     float LEFT_WEIGHT = 1.0;
-    float LINEFOLLOWERWEIGHT = 0.5;
-    float BASE_EFFORT = 50;
-    int STATION_DISTANCE = 20.0f;
-    int PANEL_DISTANCE = 20.0f;
+    float LINEFOLLOWERWEIGHT = 0.35;
+    float BASE_EFFORT = 70;
+    int STATION_DISTANCE = 10.0f;
+    int PANEL_DISTANCE = 18.0f;
     float POSITION_45 = 1900.0f;
     float POSITION_25 = 3200.0f;
+
 
 public:
     void init();

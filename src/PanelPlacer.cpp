@@ -5,7 +5,7 @@ IRDecoder decoder;
 
 void PanelPlacer::init()
 {
-    goalState = TO_ROOF;
+    goalState = DEPOSIT;
     side = SIDE_45;
     idling = false;
 
@@ -95,7 +95,7 @@ void PanelPlacer::run()
 
             ultrasonic.ping();
             float dist = ultrasonic.getDistanceCM();
-            Serial.print(dist);
+            Serial.println(dist);
             if(dist > pidRange.getSetpoint())
             {
                 linefollower.linefollow();
@@ -195,6 +195,9 @@ void PanelPlacer::run()
             {
                 nextBehavior();
             }
+            ultrasonic.ping();
+            float dist = ultrasonic.getDistanceCM();
+            Serial.println(dist);
             break;
         }
 
