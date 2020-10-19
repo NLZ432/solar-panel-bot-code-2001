@@ -221,8 +221,8 @@ class PanelPlacer
     float LEFT_WEIGHT = 1.0;
     float LINEFOLLOWERWEIGHT = 0.35;
     float BASE_EFFORT = 70;
-    int STATION_DISTANCE = 12.0f;
-    int PANEL_DISTANCE = 10.0f;
+    int STATION_DISTANCE = 16.0f;
+    int PANEL_DISTANCE = 16.0f;
     float POSITION_45 = 1900.0f;
     float POSITION_25 = 3200.0f;
     float BATTERY_CONTROL_FACTOR = 1.0;

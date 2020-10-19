@@ -104,7 +104,7 @@ void PanelPlacer::run()
 
             ultrasonic.ping();
             float dist = ultrasonic.getDistanceCM();
-            
+            linefollower.basespeed = int(float(linefollower.basespeed) * 1.0f);
             if(dist > pidRange.getSetpoint())
             {
                 linefollower.linefollow();

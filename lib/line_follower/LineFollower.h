@@ -25,17 +25,17 @@ class LineFollower
         int readLeftValue();
         int readRightValue();
 
+        float WEIGHT_BOTH;
+        int basespeed;
     private:
         QTRSensors qtr;
         PIDController leftpid;
         PIDController rightpid;
         Romi32U4Motors motors;
         Rangefinder ultrasonic;
-        int basespeed;
         int goal;
 
         float WEIGHT_RIGHT;
         float WEIGHT_LEFT;
-        float WEIGHT_BOTH;
 
 };
