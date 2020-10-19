@@ -21,7 +21,7 @@ public:
  const int CPR = 1440; 
  const int COUNTS_PER_INCH = CPR / (3.14159 * wheelDiameter); //counts per wheel rotation divided by inches per wheel rotation
  const int COUNTS_PER_DEGREE = (COUNTS_PER_INCH * 3.14159 * wheelTrack) / 360; //counts per romi rotation divided by degrees per rotation
- const int16_t right_90_counts = 800; 
+ int16_t right_90_counts; 
 
  int BASE_EFFORT;
  float RIGHT_WEIGHT;

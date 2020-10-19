@@ -47,6 +47,8 @@ class BlueMotor
 
 public: 
 
+    float ARMWEIGHT;
+
     PIDController pid;
 
     void setEffort(int effort);
@@ -55,12 +57,8 @@ public:
     void setTargetPosition(float position);
     void setTargetSpeed(float speed);
 
-    void moveTo(long position);
     void runToTarget();
     bool arrived();
-
-    int speedController(float target_speed);
-    float positionController();
 
     float getAngularVelocity();
     long getPositionDegrees();

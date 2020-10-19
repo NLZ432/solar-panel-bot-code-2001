@@ -68,13 +68,15 @@ class PanelPlacer
     };
 
     goal TO_ROOF_INST = {
-    {   { WAIT },
+    {   {OPEN_GRIP},
+        { WAIT },
+        {CLOSE_GRIP},
+        { WAIT },
         {DEPO_POSITION, 700},
         {TO_INTERSECTION},
         {DRIVE_DISTANCE, 3},
-        {TURN, -70},
+        {TURN, -95},
         { WAIT },
-        {TO_PANEL},
         {NEXT     }
         }
     };
@@ -93,35 +95,38 @@ class PanelPlacer
     };
 
     goal DEPOSIT_INST = {
-        { {TURN, -170},
+        { 
+          {CLOSE_GRIP},
+          {DEPO_POSITION, 400},
+          {TURN, 210},
           {TO_INTERSECTION},
           {DRIVE_DISTANCE, 2},
-          {TURN, 70},
+          {TURN, -90},
+          {WAIT},
           {TO_STATION},
-          {DEPO_POSITION, 400},
-          {DRIVE_DISTANCE, 3},
           {DEPO_POSITION, 0},
           {WAIT},
           {OPEN_GRIP},
           {WAIT},
           {CLOSE_GRIP},
-          {DEPO_POSITION, 20},
+          {DEPO_POSITION, 400},
           {DRIVE_DISTANCE, -3},
           {TURN, 180},
-          {NEXT     } } 
+          {NEXT     }   }
     };
 
     goal REPLACE_INST = {
-        { {CLOSE_GRIP},
+        { 
+          {CLOSE_GRIP},
+          {POSITION, 220},
+          {TO_PANEL},
           {WAIT},
-          {POSITION, 350},
-          {DRIVE_DISTANCE, 7},
-          {WAIT},
-          {POSITION, 0},
           {OPEN_GRIP},
           {DRIVE_DISTANCE, -7},
           {DEPO_POSITION, 0},
           {CLOSE_GRIP},
+          {TURN, 210},
+          {WAIT},
           {NEXT     } } 
         };
 
@@ -138,19 +143,31 @@ class PanelPlacer
     };
 
     goal TEST1_INST = {
-        {   { WAIT },
-        {DEPO_POSITION, 400},
-        {TO_INTERSECTION},
-        {DRIVE_DISTANCE, 2},
-        {TURN, -70},
-        {TO_PANEL},
-        {NEXT     }
-        }
+        {   {OPEN_GRIP},
+            { WAIT },
+            {CLOSE_GRIP},
+            { WAIT },
+            { NEXT }   }
         };
 
     goal TEST2_INST = {
-    {   {DEPO_POSITION, 0},
-        {NEXT     }   }
+    {     {CLOSE_GRIP},
+          {DEPO_POSITION, 400},
+          {TURN, 210},
+          {TO_INTERSECTION},
+          {DRIVE_DISTANCE, 2},
+          {TURN, -90},
+          {WAIT},
+          {TO_STATION},
+          {DEPO_POSITION, 0},
+          {WAIT},
+          {OPEN_GRIP},
+          {WAIT},
+          {CLOSE_GRIP},
+          {DEPO_POSITION, 400},
+          {DRIVE_DISTANCE, -3},
+          {TURN, 180},
+          {NEXT     }   }
     };
     
     goal CALIBRATE_TURN_INST = {
@@ -189,7 +206,7 @@ class PanelPlacer
 
     int instNum; //index of current instruction
     enum sides { SIDE_45, SIDE_25 }side;
-    bool withCollector = false;
+    bool withCollector = true;
     bool idling;
     unsigned long clock;
     uint16_t servo_pos = 1800;
@@ -198,16 +215,18 @@ class PanelPlacer
     void nextBehavior();
     void changeGoal();
 
+    int16_t COUNTS_90 = 650;
     long POSITION_THRESHOLD = 30;
     float RIGHT_WEIGHT = 1.0;
     float LEFT_WEIGHT = 1.0;
     float LINEFOLLOWERWEIGHT = 0.35;
     float BASE_EFFORT = 70;
-    int STATION_DISTANCE = 10.0f;
-    int PANEL_DISTANCE = 18.0f;
+    int STATION_DISTANCE = 12.0f;
+    int PANEL_DISTANCE = 10.0f;
     float POSITION_45 = 1900.0f;
     float POSITION_25 = 3200.0f;
-
+    float BATTERY_CONTROL_FACTOR = 1.0;
+    float ARMWEIGHT = 1.0f;
 
 public:
     void init();

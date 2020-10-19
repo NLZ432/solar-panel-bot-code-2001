@@ -5,13 +5,17 @@ IRDecoder decoder;
 
 void PanelPlacer::init()
 {
-    goalState = DEPOSIT;
+    goalState = TO_ROOF;
     side = SIDE_45;
     idling = false;
 
+    BASE_EFFORT = BASE_EFFORT * BATTERY_CONTROL_FACTOR;
+
+    chassis.right_90_counts = COUNTS_90;
     chassis.BASE_EFFORT = BASE_EFFORT;
     chassis.RIGHT_WEIGHT = RIGHT_WEIGHT;
     chassis.LEFT_WEIGHT = LEFT_WEIGHT;
+    fourbar.ARMWEIGHT = ARMWEIGHT;
 
     decoder.init();
     fourbar.mount();
@@ -76,8 +80,11 @@ void PanelPlacer::run()
 
         case TO_STATION:{
 
+            pidRange.setSetpoint(STATION_DISTANCE);
+
             ultrasonic.ping();
-            if(ultrasonic.getDistanceCM() > pidRange.getSetpoint())
+            float dist = ultrasonic.getDistanceCM();
+            if (dist > pidRange.getSetpoint())
             {
                 linefollower.linefollow();
             }
@@ -86,7 +93,9 @@ void PanelPlacer::run()
                 motors.setEfforts(0,0);
                 nextBehavior();
             }
+            Serial.println(dist);
             break;
+
         }
         
         case TO_PANEL:{
@@ -95,7 +104,7 @@ void PanelPlacer::run()
 
             ultrasonic.ping();
             float dist = ultrasonic.getDistanceCM();
-            Serial.println(dist);
+            
             if(dist > pidRange.getSetpoint())
             {
                 linefollower.linefollow();
@@ -106,6 +115,7 @@ void PanelPlacer::run()
                 nextBehavior();
             }
             
+            Serial.println(dist);
             break;
         }
 

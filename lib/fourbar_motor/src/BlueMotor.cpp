@@ -22,7 +22,7 @@ void BlueMotor::mount()
     attachInterrupt(digitalPinToInterrupt(encoderPinA),encoderISR,CHANGE);
     attachInterrupt(digitalPinToInterrupt(encoderPinB),encoderISR,CHANGE);
 
-    pid.setPID(4.0, 0.5, 1.0);
+    pid.setPID(4.0f, 0.5f, 1.0f);
 
     TCCR1A = 0xA8;
     TCCR1B = 0x11;
@@ -116,24 +116,10 @@ int BlueMotor::setEffortWithoutDB(int effort)
   return int(newEffort)*direction; //multiplied by the direction for sign consistency in graph
 
 }
-void BlueMotor::moveTo(long target_position)
-{
 
-    int effort = 0;
-    long error = (target_position - getPositionDegrees());
-    if (error == 0) effort = 0;
-    else effort = (error/abs(error)) * 40;
-    setEffort(effort);
-
-    while (abs(error) > POSITION_THRESHOLD) {
-        error = (target_position - getPositionDegrees());
-    }
-
-    setEffort(0);
-}
 void BlueMotor::runToTarget()
 {
-    float effort = pid.calculate(float(count));
+    float effort = pid.calculate(float(count)) * ARMWEIGHT;
     effort = min(max(effort, -400.0f),400.0f);
     setEffortWithoutDB(int(effort));
 }
@@ -141,25 +127,6 @@ bool BlueMotor::arrived()
 {
     return (abs(long(pid.getSetpoint()) - count) < POSITION_THRESHOLD);
 }
-int BlueMotor::speedController(float target_speed){
-    static float integral = 0.0f;
 
-    float error = target_speed - getAngularVelocity();
-    integral = (integral + error) * float(abs(error) < SPEED_I_CUTOFF); //integrate only if error within I range
-    int control = int(error * speed_kP) + int(integral * speed_kI);
-
-    control = max( min(control, 100) , -100); //cap below magnitude of 100
-    return control;
-}
-float BlueMotor::positionController()
-{
-    static long integral = 0;
-
-    long error = target_count - count;
-    integral = (integral + error) * (abs(error) < POSITION_I_CUTOFF); //integrate only if error within I range
-    float control = (float(error) * position_kP) + (float(integral) * position_kI);
-    
-    return control;
-}
 
 
